@@ -1,0 +1,1541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+<title>CommunityHub — The Hamilton Residence</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+/* ========== RESET & VARIABLES ========== */
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+:root {
+  --navy: #0F172A;
+  --navy-light: #1E293B;
+  --gold: #C6A969;
+  --gold-light: #FCEABB;
+  --primary: var(--navy);
+  --primary-light: var(--navy-light);
+  --primary-pale: #f1f5f9;
+  --primary-dark: #000000;
+  --bg: #F8FAFC;
+  --surface: #ffffff;
+  --surface2: #f1f5f9;
+  --border: #e2e8f0;
+  --text: #0f172a;
+  --text-muted: #334155;
+  --text-light: #64748b;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --info: #3b82f6;
+  --radius: 24px;
+  --radius-sm: 12px;
+  --shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04), 0 2px 6px -1px rgba(15, 23, 42, 0.02);
+  --shadow-lg: 0 20px 40px rgba(15,23,42,.08);
+  --shadow-premium: 0 20px 40px rgba(15,23,42,.08);
+}
+html { font-size: 15px; }
+body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; -webkit-font-smoothing: antialiased; line-height: 1.5; }
+#public-shell { display: block; }
+#admin-shell { display: none; }
+
+/* ========== UTILITIES ========== */
+.container { max-width: 940px; margin: 0 auto; padding: 20px 16px 110px; }
+h1, .h1 { font-size: 2rem; font-weight: 800; line-height: 1.2; letter-spacing: -0.02em; }
+h2, .h2 { font-size: 1.5rem; font-weight: 800; line-height: 1.25; letter-spacing: -0.01em; }
+h3, .h3 { font-size: 1.125rem; font-weight: 700; line-height: 1.3; }
+.body-text { font-size: 0.875rem; line-height: 1.5; }
+.caption { font-size: 0.75rem; line-height: 1.4; color: var(--text-light); }
+
+.section-title { font-size: 1.5rem; font-weight: 800; margin-bottom: 1rem; letter-spacing: -0.01em; line-height: 1.25; }
+@media(min-width: 768px) { .container { padding: 32px 24px 40px; } }
+
+/* ========== TOP NAV PUBLIC ========== */
+.pub-nav {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 16px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.pub-logo { display: flex; align-items: center; gap: 10px; }
+.pub-logo-icon {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+.pub-logo-text { font-size: 16px; font-weight: 800; letter-spacing: -0.5px; }
+.pub-logo-sub { font-size: 9px; color: var(--text-light); margin-top: 1px; }
+.pub-menu-btn {
+  display: block;
+  font-size: 22px;
+  background: none;
+  border: none;
+  color: var(--text);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 10px;
+}
+.pub-menu-btn:hover { background: var(--surface2); color: var(--primary); }
+.admin-login-btn {
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: #fff;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.admin-login-btn:hover { color: var(--primary); border-color: var(--primary); background: var(--primary-pale); }
+.pub-topbar-date { font-size: 12px; font-weight: 500; color: var(--text-light); display: none; }
+@media(min-width: 768px) { .pub-topbar-date { display: block; } }
+.pub-topbar-search { display: none; position: relative; width: 260px; }
+.pub-topbar-search input { width: 100%; padding: 8px 12px 8px 36px; border: 1px solid var(--border); border-radius: 30px; font-size: 13px; background: var(--surface2); }
+.pub-topbar-search .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 14px; }
+@media(min-width: 768px) { .pub-topbar-search { display: block; } }
+
+/* ========== SIDEBAR DRAWER ========== */
+.pub-sidebar-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  backdrop-filter: blur(4px);
+  z-index: 998;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.pub-sidebar-backdrop.open { display: block; opacity: 1; }
+.pub-sidebar {
+  position: fixed;
+  top: 0;
+  left: -280px;
+  bottom: 0;
+  width: 280px;
+  background: rgba(255,255,255,0.98);
+  backdrop-filter: blur(20px);
+  border-right: 1px solid var(--border);
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.pub-sidebar.open { transform: translateX(280px); }
+.pub-sidebar-header {
+  height: 64px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+}
+.pub-sidebar-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: none;
+  cursor: pointer;
+}
+.pub-sidebar-body { flex: 1; padding: 20px 16px; display: flex; flex-direction: column; gap: 4px; overflow-y: auto; }
+.pub-sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+}
+.pub-sidebar-link.active { background: var(--primary-pale); color: var(--primary); }
+.admin-login-btn-sidebar {
+  margin-top: 20px;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+}
+.visitor-counter { padding: 12px; background: var(--surface2); border-radius: 12px; font-size: 11px; }
+
+/* ========== DESKTOP SIDEBAR ========== */
+.pub-desktop-sidebar {
+  display: none;
+  width: 260px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  flex-direction: column;
+}
+.pub-sidebar-logo { padding: 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; }
+.pub-sidebar-nav { flex: 1; padding: 20px 12px; display: flex; flex-direction: column; gap: 4px; overflow-y: auto; }
+.pub-sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+}
+.pub-sidebar-item.active { background: var(--primary-pale); color: var(--primary); }
+.pub-sidebar-footer { padding: 16px; border-top: 1px solid var(--border); }
+.pub-main-content { margin-left: 0; }
+@media(min-width: 768px) {
+  .pub-menu-btn { display: none !important; }
+  .pub-nav .pub-logo { display: none; }
+  .pub-desktop-sidebar { display: flex; }
+  .pub-main-content { margin-left: 260px; }
+  .pub-mobile-bottom-nav { display: none !important; }
+}
+
+/* ========== MOBILE BOTTOM NAV ========== */
+.pub-mobile-bottom-nav {
+  display: flex;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: calc(64px + env(safe-area-inset-bottom, 0px));
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(25px);
+  border-top: 1px solid rgba(0,0,0,0.05);
+  border-radius: 24px 24px 0 0;
+  z-index: 950;
+  justify-content: space-around;
+  align-items: center;
+  box-shadow: 0 -4px 30px rgba(0,0,0,0.04);
+}
+.pub-mobile-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--text-light);
+  cursor: pointer;
+  flex: 1;
+  height: 64px;
+  transition: color 0.3s ease;
+}
+.pub-mobile-tab.active { color: var(--primary); }
+.pub-tab-icon { font-size: 1.2rem; transition: transform 0.3s ease; }
+.pub-mobile-tab.active .pub-tab-icon { transform: scale(1.1); }
+.pub-fab-container {
+  position: relative;
+  width: 72px;
+  height: 64px;
+}
+.pub-mobile-fab {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary-light), var(--primary));
+  color: #fff;
+  font-size: 1.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 4px solid var(--bg);
+  box-shadow: 0 8px 24px rgba(5,150,105,0.3);
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s;
+}
+.pub-mobile-fab:hover { transform: translateX(-50%) scale(1.05); }
+.pub-mobile-fab.open { transform: translateX(-50%) rotate(135deg); background: var(--danger); box-shadow: 0 8px 24px rgba(239,68,68,0.3); }
+
+/* ========== QUICK ACTIONS SHEET ========== */
+.pub-actions-sheet-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  backdrop-filter: blur(4px);
+  z-index: 990;
+}
+.pub-actions-sheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border-radius: 24px 24px 0 0;
+  transform: translateY(100%);
+  transition: transform 0.3s;
+  z-index: 991;
+  padding: 20px 20px 30px;
+}
+.pub-actions-sheet.open { transform: translateY(0); }
+.pub-sheet-handle { width: 40px; height: 4px; background: var(--border); border-radius: 4px; margin: 0 auto 16px; }
+.pub-sheet-title { font-size: 16px; font-weight: 800; text-align: center; margin-bottom: 16px; }
+.pub-sheet-btn {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+.pub-sheet-btn-icon {
+  width: 44px;
+  height: 44px;
+  background: #fff;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+.pub-sheet-btn-title { font-weight: 700; }
+.pub-sheet-btn-desc { font-size: 11px; color: var(--text-light); }
+
+/* ========== ANIMATIONS ========== */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.pub-page { display: none; }
+.pub-page.active { display: block; animation: fadeInUp 0.4s ease; }
+
+/* ========== HERO SECTION ========== */
+.hero {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+  border-radius: 28px;
+  padding: 2.5rem 1.5rem;
+  margin-bottom: 2rem;
+  color: #fff;
+  box-shadow: var(--shadow-premium);
+  position: relative;
+  overflow: hidden;
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuMDUiLz4KPC9zdmc+') repeat;
+  opacity: 0.4;
+  pointer-events: none;
+}
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(198,169,105,0.2); /* Gold background */
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(198,169,105,0.3);
+  color: var(--gold);
+  border-radius: 100px;
+  padding: 6px 14px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  position: relative;
+  z-index: 1;
+}
+.hero-title { font-size: 2rem; font-weight: 800; margin-bottom: 0.5rem; letter-spacing: -0.03em; line-height: 1.15; position: relative; z-index: 1; }
+.hero-sub { font-size: 0.95rem; opacity: 0.85; margin-bottom: 1.5rem; line-height: 1.6; position: relative; z-index: 1; }
+.hero-actions { position: relative; z-index: 1; display: flex; gap: 12px; flex-wrap: wrap; }
+.btn-primary {
+  background: var(--gold);
+  border: none;
+  padding: 12px 24px;
+  border-radius: 100px;
+  color: var(--navy);
+  font-weight: 800;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 8px 20px rgba(198,169,105,0.3);
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(198,169,105,0.4); background: var(--gold-light); }
+.btn-outline-light {
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.3);
+  padding: 12px 24px;
+  border-radius: 100px;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.btn-outline-light:hover { background: rgba(255,255,255,0.2); transform: translateY(-2px); }
+
+/* ========== STATS CARDS ========== */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+@media(min-width: 640px) { .stats-grid { grid-template-columns: repeat(4, 1fr); gap: 16px; } }
+.stat-card {
+  background: #fff;
+  border-radius: 24px;
+  padding: 1rem;
+  border: 1px solid rgba(0,0,0,0.03);
+  box-shadow: var(--shadow-premium);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  max-width: 420px;
+  margin: auto;
+  width: 100%;
+}
+.stat-card:hover { transform: translateY(-4px); box-shadow: 0 24px 48px -12px rgba(15,23,42,0.12); }
+.stat-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.stat-icon {
+  width: 36px;
+  height: 36px;
+  background: var(--primary-pale);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  color: var(--gold);
+}
+.stat-title { font-size: 0.7rem; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.05em; }
+.stat-value { font-size: 1.5rem; font-weight: 800; font-family: 'DM Mono', monospace; letter-spacing: -0.02em; }
+.stat-sub { font-size: 0.7rem; color: var(--text-light); margin-top: 6px; }
+
+/* ========== QUICK GRID ========== */
+.quick-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+@media(min-width: 640px) { .quick-grid { grid-template-columns: repeat(4, 1fr); } }
+.quick-card {
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.03);
+  border-radius: 24px;
+  padding: 1rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-premium);
+  max-width: 420px;
+  margin: auto;
+  width: 100%;
+}
+.quick-card:hover { transform: translateY(-4px); box-shadow: 0 24px 48px -12px rgba(15,23,42,0.12); border-color: rgba(198,169,105,0.3); }
+.quick-icon { font-size: 1.5rem; margin-bottom: 12px; transition: transform 0.3s ease; color: var(--navy); }
+.quick-card:hover .quick-icon { transform: scale(1.1); color: var(--gold); }
+.quick-title { font-size: 0.8rem; font-weight: 700; }
+.quick-desc { font-size: 0.65rem; color: var(--text-light); margin-top: 4px; line-height: 1.3; }
+
+/* ========== ANNOUNCEMENT CARDS ========== */
+.announce-list { display: flex; flex-direction: column; gap: 12px; }
+
+/* ========== SPRINT 2: FEED & SLIDER ========== */
+.feed-card {
+  background: #fff;
+  border-radius: 24px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-premium);
+  border: 1px solid rgba(0,0,0,0.03);
+}
+.events-slider {
+  display: flex;
+  overflow-x: auto;
+  gap: 16px;
+  padding-bottom: 12px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+.events-slider::-webkit-scrollbar { display: none; }
+.event-slide-card {
+  min-width: 260px;
+  background: #fff;
+  border-radius: 24px;
+  padding: 16px;
+  box-shadow: var(--shadow-premium);
+  border: 1px solid rgba(0,0,0,0.03);
+  scroll-snap-align: start;
+}
+
+
+
+/* SPRINT 5: FAB OVERRIDE */
+.pub-mobile-fab { background: var(--gold) !important; color: #fff !important; box-shadow: 0 -5px 15px rgba(198,169,105,0.4) !important; transform: translateY(-25px) !important; border: 4px solid #fff; }
+[data-theme="dark"] .pub-mobile-fab { border-color: rgba(15, 23, 42, 0.98); }
+
+/* ========== SPRINT 4: DARK MODE & TOGGLE ========== */
+[data-theme="dark"] {
+  --bg: #0F172A;
+  --surface: #1E293B;
+  --surface2: #334155;
+  --text: #F8FAFC;
+  --text-muted: #CBD5E1;
+  --text-light: #94A3B8;
+  --border: #334155;
+  --shadow-premium: 0 10px 25px -5px rgba(0,0,0,0.5), 0 8px 10px -6px rgba(0,0,0,0.5);
+  --primary-pale: #334155;
+}
+[data-theme="dark"] .pub-mobile-bottom-nav { background: rgba(15, 23, 42, 0.95); border-top: 1px solid rgba(255,255,255,0.05); }
+[data-theme="dark"] .pub-actions-sheet, [data-theme="dark"] .request-form { background: var(--surface); }
+[data-theme="dark"] .pub-sheet-btn-icon, [data-theme="dark"] .feed-card, [data-theme="dark"] .event-slide-card, [data-theme="dark"] .stat-card, [data-theme="dark"] .quick-card, [data-theme="dark"] .member-card { background: var(--surface); border-color: var(--border); }
+[data-theme="dark"] .back-to-home-btn { background: var(--surface); color: var(--text); border-color: var(--border); }
+[data-theme="dark"] .filter-bar input, [data-theme="dark"] .check-dues-box input { background: var(--surface); color: var(--text); border-color: var(--border); }
+[data-theme="dark"] .hero { background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%); }
+[data-theme="dark"] .pub-profile-card, [data-theme="dark"] .pub-settings-card { background: var(--surface) !important; border-color: var(--border) !important; }
+
+.toggle-switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.toggle-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border); transition: .3s; border-radius: 24px; }
+.toggle-slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+input:checked + .toggle-slider { background-color: var(--gold); }
+input:checked + .toggle-slider:before { transform: translateX(20px); }
+
+.announce-item {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  gap: 14px;
+}
+.announce-icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.announce-icon-wrap.urgent { background: #fee2e2; color: #dc2626; }
+.announce-icon-wrap.event { background: #e0f2fe; color: #0284c7; }
+.announce-icon-wrap.info { background: var(--primary-pale); color: var(--primary); }
+.announce-item-title { font-size: 14px; font-weight: 800; margin-bottom: 4px; }
+.announce-item-body { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+.announce-item-meta { font-size: 10px; color: var(--text-light); margin-top: 6px; }
+
+/* ========== MEMBER CARDS (MOBILE FRIENDLY) ========== */
+.member-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+@media(min-width: 640px) { .member-grid { grid-template-columns: repeat(2, 1fr); } }
+.member-card {
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.04);
+  border-radius: 24px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: var(--shadow-premium);
+  transition: all 0.3s ease;
+  max-width: 420px;
+  margin: auto;
+  width: 100%;
+}
+.member-card:hover { transform: translateY(-4px); box-shadow: 0 24px 48px -12px rgba(15,23,42,0.12); }
+.member-avatar {
+  width: 54px;
+  height: 54px;
+  background: linear-gradient(135deg, var(--navy), var(--navy-light));
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold);
+  font-weight: 800;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+  box-shadow: 0 8px 16px rgba(15,23,42,0.2);
+}
+.member-info { flex: 1; }
+.member-name { font-weight: 700; font-size: 0.95rem; }
+.member-address { font-size: 0.75rem; color: var(--text-light); margin-top: 4px; }
+.member-badge {
+  display: inline-block;
+  font-size: 9px;
+  padding: 2px 8px;
+  border-radius: 100px;
+  background: var(--primary-pale);
+  color: var(--primary-dark);
+  margin-top: 4px;
+}
+.member-wa-btn {
+  background: #e8fdf0;
+  padding: 8px;
+  border-radius: 10px;
+  text-decoration: none;
+  color: #166534;
+  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ========== BOARD MEMBER CARDS ========== */
+.board-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.board-card.president { border-left: 4px solid var(--primary); background: var(--primary-pale); }
+.board-avatar {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 800;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.board-info { flex: 1; }
+.board-role { font-size: 10px; font-weight: 700; color: var(--primary); margin-bottom: 2px; }
+.board-name { font-weight: 700; font-size: 14px; }
+.board-contact-btn {
+  background: #e8fdf0;
+  padding: 8px 12px;
+  border-radius: 10px;
+  text-decoration: none;
+  color: #166534;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* ========== CHECK DUES BOX ========== */
+.check-dues-box {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 28px 20px;
+  max-width: 480px;
+  margin: 0 auto;
+}
+.form-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 14px;
+  outline: none;
+  margin-bottom: 16px;
+}
+.form-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(5,150,105,0.1); }
+.btn-check {
+  width: 100%;
+  padding: 14px;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.dues-month-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 16px 0;
+}
+@media(min-width: 480px) { .dues-month-grid { grid-template-columns: repeat(4, 1fr); } }
+.dues-month-item {
+  text-align: center;
+  padding: 10px 4px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 700;
+}
+.dues-month-item.paid { background: var(--primary-pale); color: var(--primary-dark); }
+.dues-month-item.unpaid { background: #fee2e2; color: #991b1b; }
+
+/* ========== REQUEST FORM ========== */
+.request-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
+}
+@media(min-width: 640px) { .request-grid { grid-template-columns: repeat(3, 1fr); } }
+.request-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px 10px;
+  text-align: center;
+  cursor: pointer;
+}
+.request-card.selected { border-color: var(--primary); background: var(--primary-pale); }
+.request-icon { font-size: 24px; margin-bottom: 6px; }
+.request-name { font-size: 12px; font-weight: 700; }
+
+/* ========== ALBUM & ASSETS GRID ========== */
+.album-grid, .assets-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+@media(min-width: 640px) { .album-grid, .assets-grid { grid-template-columns: repeat(2, 1fr); } }
+@media(min-width: 1024px) { .album-grid, .assets-grid { grid-template-columns: repeat(3, 1fr); } }
+
+/* ========== TABLES RESPONSIVE ========== */
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 16px;
+}
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 600px;
+}
+.admin-table th, .admin-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+}
+.admin-table th { background: var(--surface2); font-weight: 700; color: var(--text-muted); }
+.status-pill {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 100px;
+  font-size: 10px;
+  font-weight: 700;
+}
+.status-pill.paid { background: var(--primary-pale); color: var(--primary-dark); }
+.status-pill.unpaid { background: #fee2e2; color: #991b1b; }
+.status-pill.partial { background: #fef3c7; color: #92400e; }
+
+/* ========== ADMIN SIDEBAR ========== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -250px;
+  bottom: 0;
+  width: 250px;
+  background: #062f19;
+  z-index: 999;
+  transition: transform 0.3s;
+  display: flex;
+  flex-direction: column;
+}
+.sidebar.open { transform: translateX(250px); }
+.sidebar-logo { padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.logo-icon {
+  width: 36px;
+  height: 36px;
+  background: var(--primary);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+.logo-text { font-size: 16px; font-weight: 800; color: #fff; }
+.sidebar-community { padding: 16px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.community-name { color: #fff; font-size: 13px; font-weight: 700; }
+.sidebar-nav { flex: 1; padding: 16px; overflow-y: auto; }
+.nav-section { font-size: 10px; color: rgba(255,255,255,0.4); margin: 12px 0 8px; }
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  color: rgba(255,255,255,0.7);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.nav-item.active { background: var(--primary); color: #fff; }
+.sidebar-footer { padding: 16px; border-top: 1px solid rgba(255,255,255,0.1); }
+.user-card { display: flex; align-items: center; gap: 10px; }
+.user-av {
+  width: 34px;
+  height: 34px;
+  background: var(--primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: #fff;
+}
+.user-name { font-size: 13px; font-weight: 600; color: #fff; }
+.user-role { font-size: 10px; color: rgba(255,255,255,0.5); }
+.logout-btn { margin-left: auto; background: none; border: none; color: rgba(255,255,255,0.5); cursor: pointer; }
+
+.admin-main { margin-left: 0; }
+@media(min-width: 768px) {
+  .sidebar { left: 0; transform: none; position: fixed; }
+  .admin-main { margin-left: 250px; }
+}
+.topbar {
+  background: rgba(255,255,255,0.9);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 16px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.admin-menu-btn { display: block; background: none; border: none; font-size: 22px; cursor: pointer; }
+@media(min-width: 768px) { .admin-menu-btn { display: none; } }
+.admin-content { padding: 20px 16px; }
+.a-page { display: none; }
+.a-page.active { display: block; }
+
+/* ========== MODALS ========== */
+.modal-overlay, .add-modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(4px);
+  z-index: 500;
+  align-items: center;
+  justify-content: center;
+}
+.modal-overlay.open, .add-modal-overlay.open { display: flex; }
+.login-modal, .add-modal {
+  background: #fff;
+  border-radius: 24px;
+  padding: 28px;
+  width: 90%;
+  max-width: 400px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+.modal-close {
+  float: right;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+.modal-grid { display: flex; flex-direction: column; gap: 12px; margin: 16px 0; }
+.modal-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 20px; }
+.btn-cancel {
+  padding: 10px 20px;
+  border: 1px solid var(--border);
+  background: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.btn-save {
+  padding: 10px 24px;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+/* ========== WHATSAPP FLOAT ========== */
+.whatsapp-float {
+  position: fixed;
+  bottom: 90px;
+  right: 16px;
+  z-index: 200;
+}
+@media(min-width: 768px) { .whatsapp-float { bottom: 24px; } }
+.whatsapp-fab {
+  width: 52px;
+  height: 52px;
+  background: #25d366;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(37,211,102,0.3);
+}
+.toast {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-100px);
+  background: #1f2937;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 50px;
+  font-size: 13px;
+  z-index: 1000;
+  transition: transform 0.3s;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* ========== BACK BUTTON ========== */
+.back-to-home-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--primary-pale);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 30px;
+  font-weight: 600;
+  font-size: 12px;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== PUBLIC SHELL ==================== -->
+<div id="public-shell">
+  <!-- SIDEBAR BACKDROP & DRAWER -->
+  <div class="pub-sidebar-backdrop" id="pub-sidebar-backdrop" onclick="togglePublicSidebar()"></div>
+  <aside class="pub-sidebar" id="pub-sidebar">
+    <div class="pub-sidebar-header">
+      <div class="pub-logo"><div class="pub-logo-icon"><i data-lucide="home"></i>️</div><div><div class="pub-logo-text">CommunityHub</div><div class="pub-logo-sub">The Hamilton</div></div></div>
+      <button class="pub-sidebar-close" onclick="togglePublicSidebar()">✕</button>
+    </div>
+    <div class="pub-sidebar-body">
+      <button class="pub-sidebar-link active" onclick="showPubPage('home')"><i data-lucide="home"></i> Dashboard</button>
+      <button class="pub-sidebar-link" onclick="showPubPage('announcements')"><i data-lucide="megaphone"></i> Announcements</button>
+      <button class="pub-sidebar-link" onclick="showPubPage('members')"><i data-lucide="users"></i> Members Directory</button>
+      <button class="pub-sidebar-link" onclick="showPubPage('check-dues')"><i data-lucide="wallet"></i> Payments</button>
+      <button class="pub-sidebar-link" onclick="showPubPage('requests')"><i data-lucide="clipboard-list"></i> Service Requests</button>
+      <button class="pub-sidebar-link" onclick="showPubPage('polls')"><i data-lucide="vote"></i> Community Voting</button>
+      <button class="pub-sidebar-link" onclick="showPubPage('board')"><i data-lucide="crown"></i> Board Members</button>
+      <button class="pub-sidebar-link" onclick="showPubPage('gallery')"><i data-lucide="camera"></i> Event Gallery</button>
+      <button class="pub-sidebar-link" onclick="showPubPage('assets')"><i data-lucide="box"></i> Community Assets</button>
+      <div style="margin-top: auto; padding-top: 20px;">
+        <button class="admin-login-btn-sidebar" onclick="openLoginModal(); togglePublicSidebar();"><i data-lucide="lock"></i> Admin Panel</button>
+        <div class="visitor-counter" style="margin-top: 16px;"><div style="font-weight:700; margin-bottom:6px;"><i data-lucide="bar-chart-2"></i> Community Info</div><div><i data-lucide="map-pin"></i> Austin, Texas</div><div><i data-lucide="home"></i> 50 Households</div><div><i data-lucide="crown"></i> 5 Board Members</div><div><i data-lucide="calendar"></i> Founded 2018</div></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- DESKTOP SIDEBAR -->
+  <div class="pub-desktop-wrapper">
+    <aside class="pub-desktop-sidebar">
+      <div class="pub-sidebar-logo"><div class="pub-logo-icon"><i data-lucide="home"></i>️</div><div><div class="pub-logo-text">CommunityHub</div><div class="pub-logo-sub">The Hamilton</div></div></div>
+      <nav class="pub-sidebar-nav">
+        <button class="pub-sidebar-item active" onclick="showPubPage('home')"><i data-lucide="home"></i> Dashboard</button>
+        <button class="pub-sidebar-item" onclick="showPubPage('announcements')"><i data-lucide="megaphone"></i> Announcements</button>
+        <button class="pub-sidebar-item" onclick="showPubPage('members')"><i data-lucide="users"></i> Members Directory</button>
+        <button class="pub-sidebar-item" onclick="showPubPage('check-dues')"><i data-lucide="wallet"></i> Payments</button>
+        <button class="pub-sidebar-item" onclick="showPubPage('requests')"><i data-lucide="clipboard-list"></i> Service Requests</button>
+        <button class="pub-sidebar-item" onclick="showPubPage('polls')"><i data-lucide="vote"></i> Community Voting</button>
+        <button class="pub-sidebar-item" onclick="showPubPage('board')"><i data-lucide="crown"></i> Board Members</button>
+        <button class="pub-sidebar-item" onclick="showPubPage('gallery')"><i data-lucide="camera"></i> Event Gallery</button>
+        <button class="pub-sidebar-item" onclick="showPubPage('assets')"><i data-lucide="box"></i> Community Assets</button>
+      </nav>
+      <div class="pub-sidebar-footer">
+        <div class="visitor-counter"><div style="font-weight:700; margin-bottom:6px;"><i data-lucide="bar-chart-2"></i> Community Info</div><div><i data-lucide="map-pin"></i> Austin, Texas</div><div><i data-lucide="home"></i> 50 Households</div><div><i data-lucide="crown"></i> 5 Board Members</div><div><i data-lucide="calendar"></i> Founded 2018</div></div>
+      </div>
+    </aside>
+
+    <div class="pub-main-content">
+      <nav class="pub-nav">
+        <button class="pub-menu-btn" onclick="togglePublicSidebar()"><i data-lucide="menu"></i></button>
+        <div class="pub-logo"><div class="pub-logo-icon"><i data-lucide="home"></i>️</div><div><div class="pub-logo-text">CommunityHub</div><div class="pub-logo-sub">The Hamilton Residence</div></div></div>
+        <div class="pub-topbar-search"><span class="search-icon"><i data-lucide="search"></i></span><input type="text" id="global-search" placeholder="Search..." onkeyup="searchPublicGlobal(this.value)"></div>
+        <div class="pub-topbar-right"><span class="pub-topbar-date" id="pub-topbar-date"></span><button class="admin-login-btn" onclick="openLoginModal()"><i data-lucide="lock"></i> Admin</button></div>
+      </nav>
+
+      <!-- HOME PAGE -->
+      <div class="pub-page active" id="pub-home" style="padding:0;">
+  <!-- Top Background Header -->
+  <div style="background: linear-gradient(to bottom, rgba(15,23,42,0.8), rgba(15,23,42,0.95)), url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80') center/cover no-repeat; padding: 40px 24px 60px; color: #fff; position: relative;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div style="width:40px; height:40px; background:var(--gold); border-radius:12px; display:flex; align-items:center; justify-content:center; color:var(--navy);"><i data-lucide="shield"></i></div>
+        <div>
+          <div style="font-size:16px; font-weight:800; letter-spacing:1px; text-transform:uppercase;">The Hamilton</div>
+          <div style="font-size:10px; opacity:0.8; letter-spacing:2px; text-transform:uppercase;">Residence</div>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; gap:16px;">
+        <div style="position:relative;"><i data-lucide="bell"></i><span style="position:absolute; top:0; right:0; width:8px; height:8px; background:var(--warning); border-radius:50%; border:2px solid var(--navy);"></span></div>
+        <div style="width:36px; height:36px; border-radius:50%; background:var(--gold); display:flex; align-items:center; justify-content:center; color:var(--navy); font-weight:800; border:2px solid rgba(255,255,255,0.2);">S</div>
+      </div>
+    </div>
+    <div style="font-size:14px; opacity:0.8; margin-bottom:4px;">Good Evening,</div>
+    <div style="font-size:28px; font-weight:800; margin-bottom:8px;">Sarah Johnson 👋</div>
+    <div style="font-size:13px; opacity:0.7;">Welcome back to The Hamilton Residence</div>
+  </div>
+
+  <!-- Overlapping White Body -->
+  <div style="background:var(--bg); border-radius:30px 30px 0 0; margin-top:-30px; position:relative; z-index:10; padding:24px; padding-bottom:100px;">
+    
+    <!-- Community Status -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+      <div class="section-title" style="margin:0;">Community Status</div>
+      <a href="#" style="font-size:12px; color:var(--gold); font-weight:700; text-decoration:none;">View all &gt;</a>
+    </div>
+    <div style="display:flex; gap:12px; overflow-x:auto; padding-bottom:12px; margin-left:-24px; padding-left:24px; margin-right:-24px; padding-right:24px; scrollbar-width:none;">
+      <div style="min-width:110px; background:var(--surface); border-radius:20px; padding:16px 12px; text-align:center; border:1px solid var(--border); box-shadow:0 4px 10px rgba(0,0,0,0.03);">
+        <i data-lucide="users" style="color:#059669; margin-bottom:8px;"></i>
+        <div style="font-size:24px; font-weight:800; color:#059669;" id="pub-stat-members">92%</div>
+        <div style="font-size:11px; color:var(--text-light); line-height:1.2; margin-top:4px;">Registered<br>Households</div>
+      </div>
+      <div style="min-width:110px; background:var(--surface); border-radius:20px; padding:16px 12px; text-align:center; border:1px solid var(--border); box-shadow:0 4px 10px rgba(0,0,0,0.03);">
+        <i data-lucide="clipboard-list" style="color:var(--info); margin-bottom:8px;"></i>
+        <div style="font-size:24px; font-weight:800; color:var(--info);" id="pub-stat-requests">12</div>
+        <div style="font-size:11px; color:var(--text-light); line-height:1.2; margin-top:4px;">Open<br>Requests</div>
+      </div>
+      <div style="min-width:110px; background:var(--surface); border-radius:20px; padding:16px 12px; text-align:center; border:1px solid var(--border); box-shadow:0 4px 10px rgba(0,0,0,0.03);">
+        <i data-lucide="calendar" style="color:#8B5CF6; margin-bottom:8px;"></i>
+        <div style="font-size:24px; font-weight:800; color:#8B5CF6;" id="pub-stat-events">5</div>
+        <div style="font-size:11px; color:var(--text-light); line-height:1.2; margin-top:4px;">Upcoming<br>Events</div>
+      </div>
+      <div style="min-width:110px; background:var(--surface); border-radius:20px; padding:16px 12px; text-align:center; border:1px solid var(--border); box-shadow:0 4px 10px rgba(0,0,0,0.03);">
+        <i data-lucide="wallet" style="color:var(--gold); margin-bottom:8px;"></i>
+        <div style="font-size:24px; font-weight:800; color:var(--gold);" id="pub-stat-treasury">$24k</div>
+        <div style="font-size:11px; color:var(--text-light); line-height:1.2; margin-top:4px;" id="pub-stat-treasury-date">Total<br>Balance</div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="section-title" style="margin-top:24px; margin-bottom:16px;">Quick Actions</div>
+    <div style="display:flex; gap:12px; overflow-x:auto; padding-bottom:12px; margin-left:-24px; padding-left:24px; margin-right:-24px; padding-right:24px; scrollbar-width:none;">
+      <div onclick="showPubPage('requests')" style="min-width:110px; background:var(--surface); border-radius:20px; padding:16px 12px; text-align:center; border:1px solid var(--border); cursor:pointer;">
+        <div style="width:48px; height:48px; border-radius:50%; background:#dcfce7; display:inline-flex; align-items:center; justify-content:center; margin-bottom:12px;"><i data-lucide="tool" style="color:#166534;"></i></div>
+        <div style="font-size:13px; font-weight:800; margin-bottom:4px; color:var(--text);">Report Issue</div>
+        <div style="font-size:11px; color:var(--text-light);">Notify us</div>
+      </div>
+      <div onclick="showPubPage('check-dues')" style="min-width:110px; background:var(--surface); border-radius:20px; padding:16px 12px; text-align:center; border:1px solid var(--border); cursor:pointer;">
+        <div style="width:48px; height:48px; border-radius:50%; background:#dbeafe; display:inline-flex; align-items:center; justify-content:center; margin-bottom:12px;"><i data-lucide="credit-card" style="color:#1e40af;"></i></div>
+        <div style="font-size:13px; font-weight:800; margin-bottom:4px; color:var(--text);">Pay Dues</div>
+        <div style="font-size:11px; color:var(--text-light);">View & pay</div>
+      </div>
+      <div onclick="showPubPage('assets')" style="min-width:110px; background:var(--surface); border-radius:20px; padding:16px 12px; text-align:center; border:1px solid var(--border); cursor:pointer;">
+        <div style="width:48px; height:48px; border-radius:50%; background:#f3e8ff; display:inline-flex; align-items:center; justify-content:center; margin-bottom:12px;"><i data-lucide="calendar-check" style="color:#6b21a8;"></i></div>
+        <div style="font-size:13px; font-weight:800; margin-bottom:4px; color:var(--text);">Reserve</div>
+        <div style="font-size:11px; color:var(--text-light);">Book amenity</div>
+      </div>
+      <div onclick="showPubPage('polls')" style="min-width:110px; background:var(--surface); border-radius:20px; padding:16px 12px; text-align:center; border:1px solid var(--border); cursor:pointer;">
+        <div style="width:48px; height:48px; border-radius:50%; background:#fef3c7; display:inline-flex; align-items:center; justify-content:center; margin-bottom:12px;"><i data-lucide="bar-chart-2" style="color:#92400e;"></i></div>
+        <div style="font-size:13px; font-weight:800; margin-bottom:4px; color:var(--text);">Vote Now</div>
+        <div style="font-size:11px; color:var(--text-light);">Active polls</div>
+      </div>
+    </div>
+
+    <!-- Community Feed -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:24px; margin-bottom:16px;">
+      <div class="section-title" style="margin:0;">Community Feed</div>
+      <a href="#" style="font-size:12px; color:var(--gold); font-weight:700; text-decoration:none;" onclick="showPubPage('announcements')">View all &gt;</a>
+    </div>
+    <div id="pub-announce-list">Loading...</div>
+
+    <!-- Upcoming Events -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:24px; margin-bottom:16px;">
+      <div class="section-title" style="margin:0;">Upcoming Events</div>
+      <a href="#" style="font-size:12px; color:var(--gold); font-weight:700; text-decoration:none;" onclick="showPubPage('events')">View all &gt;</a>
+    </div>
+    <div class="events-slider" id="pub-events-list">Loading...</div>
+
+  </div>
+</div>
+
+      <!-- OTHER PAGES (Skeleton - akan diisi JS) -->
+      
+      <!-- SPRINT 3: PROFILE PAGE -->
+      <div class="pub-page" id="pub-profile">
+        <div class="container" style="max-width:420px; padding:0;">
+          <div style="background:var(--navy); color:#fff; padding:60px 24px 30px; border-radius:0 0 40px 40px; text-align:center; position:relative; overflow:hidden;">
+            <div style="position:absolute; top:-50px; right:-50px; width:150px; height:150px; background:var(--gold); opacity:0.1; border-radius:50%;"></div>
+            <div style="width:90px; height:90px; border-radius:50%; background:var(--gold); display:inline-flex; align-items:center; justify-content:center; font-size:36px; font-weight:800; color:var(--navy); border:4px solid rgba(255,255,255,0.2); margin-bottom:16px; position:relative; z-index:2;">
+              S
+            </div>
+            <h2 style="margin:0; font-size:22px; position:relative; z-index:2;">Sarah Johnson</h2>
+            <div style="font-size:14px; opacity:0.8; margin-top:4px; position:relative; z-index:2;">Unit 12B • The Hamilton</div>
+            <div style="display:inline-block; background:rgba(198,169,105,0.2); color:var(--gold); padding:6px 16px; border-radius:20px; font-size:12px; font-weight:700; margin-top:20px; border:1px solid rgba(198,169,105,0.3); position:relative; z-index:2;">
+               <i data-lucide="shield-check" style="width:14px; height:14px; margin-bottom:-2px;"></i> Verified Resident
+            </div>
+          </div>
+          
+          <div style="padding:30px 20px 100px;">
+            <h3 style="font-size:13px; color:var(--text-light); margin-bottom:12px; text-transform:uppercase; letter-spacing:0.05em; font-weight:800;">Account Settings</h3>
+            <div class="pub-profile-card" style="background:#fff; border-radius:24px; border:1px solid var(--border); overflow:hidden; margin-bottom:30px; box-shadow:var(--shadow-premium);">
+              <div style="padding:18px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:16px; cursor:pointer;"><div style="background:var(--primary-pale); color:var(--gold); padding:10px; border-radius:12px;"><i data-lucide="user" style="width:20px; height:20px;"></i></div> <div style="flex:1; font-weight:700; font-size:15px;">Personal Information</div> <i data-lucide="chevron-right" style="color:var(--text-light); width:18px;"></i></div>
+              <div style="padding:18px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:16px; cursor:pointer;"><div style="background:var(--primary-pale); color:var(--gold); padding:10px; border-radius:12px;"><i data-lucide="lock" style="width:20px; height:20px;"></i></div> <div style="flex:1; font-weight:700; font-size:15px;">Login & Security</div> <i data-lucide="chevron-right" style="color:var(--text-light); width:18px;"></i></div>
+              <div style="padding:18px 20px; display:flex; align-items:center; gap:16px; cursor:pointer;"><div style="background:var(--primary-pale); color:var(--gold); padding:10px; border-radius:12px;"><i data-lucide="credit-card" style="width:20px; height:20px;"></i></div> <div style="flex:1; font-weight:700; font-size:15px;">Payment Methods</div> <i data-lucide="chevron-right" style="color:var(--text-light); width:18px;"></i></div>
+            </div>
+
+            <h3 style="font-size:13px; color:var(--text-light); margin-bottom:12px; text-transform:uppercase; letter-spacing:0.05em; font-weight:800;">App Settings</h3>
+            <div class="pub-settings-card" style="background:#fff; border-radius:24px; border:1px solid var(--border); overflow:hidden; margin-bottom:30px; box-shadow:var(--shadow-premium);">
+              <div style="padding:18px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:16px;">
+                <div style="background:var(--primary-pale); color:var(--gold); padding:10px; border-radius:12px;"><i data-lucide="moon" style="width:20px; height:20px;"></i></div> 
+                <div style="flex:1; font-weight:700; font-size:15px;">Dark Mode</div> 
+                <label class="toggle-switch"><input type="checkbox" id="toggle-dark-mode" onchange="toggleDarkMode(this)"><span class="toggle-slider"></span></label>
+              </div>
+              <div style="padding:18px 20px; display:flex; align-items:center; gap:16px;">
+                <div style="background:var(--primary-pale); color:var(--gold); padding:10px; border-radius:12px;"><i data-lucide="bell" style="width:20px; height:20px;"></i></div> 
+                <div style="flex:1; font-weight:700; font-size:15px;">Push Notifications</div> 
+                <label class="toggle-switch"><input type="checkbox" id="toggle-notifications" onchange="toggleNotifications(this)"><span class="toggle-slider"></span></label>
+              </div>
+            </div>
+
+            <h3 style="font-size:13px; color:var(--text-light); margin-bottom:12px; text-transform:uppercase; letter-spacing:0.05em; font-weight:800;">My Activity</h3>
+            <div class="pub-profile-card" style="background:#fff; border-radius:24px; border:1px solid var(--border); overflow:hidden; margin-bottom:30px; box-shadow:var(--shadow-premium);">
+              <div style="padding:18px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:16px; cursor:pointer;" onclick="showPubPage('check-dues')"><div style="background:#f1f5f9; color:var(--navy); padding:10px; border-radius:12px;"><i data-lucide="file-text" style="width:20px; height:20px;"></i></div> <div style="flex:1; font-weight:700; font-size:15px;">Payment History</div> <i data-lucide="chevron-right" style="color:var(--text-light); width:18px;"></i></div>
+              <div style="padding:18px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:16px; cursor:pointer;" onclick="showPubPage('requests')"><div style="background:#f1f5f9; color:var(--navy); padding:10px; border-radius:12px;"><i data-lucide="tool" style="width:20px; height:20px;"></i></div> <div style="flex:1; font-weight:700; font-size:15px;">My Requests</div> <i data-lucide="chevron-right" style="color:var(--text-light); width:18px;"></i></div>
+              <div style="padding:18px 20px; display:flex; align-items:center; gap:16px; cursor:pointer;" onclick="showPubPage('assets')"><div style="background:#f1f5f9; color:var(--navy); padding:10px; border-radius:12px;"><i data-lucide="calendar-check" style="width:20px; height:20px;"></i></div> <div style="flex:1; font-weight:700; font-size:15px;">My Reservations</div> <i data-lucide="chevron-right" style="color:var(--text-light); width:18px;"></i></div>
+            </div>
+            
+            <button class="btn-check" style="background:#fff; color:var(--danger); border:1px solid rgba(239,68,68,0.3); width:100%; box-shadow:none; font-weight:800; padding:16px; border-radius:16px;">Log Out</button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- SPRINT 3: EVENTS PAGE -->
+      <div class="pub-page" id="pub-events"><div class="container"><button class="back-to-home-btn" onclick="showPubPage('home')">  Back</button><div class="section-title"><i data-lucide="calendar"></i> Community Events</div><div id="pub-events-all-list" style="margin-top:20px; text-align:center; color:var(--text-light);">Loading events...</div></div></div>
+
+      <div class="pub-page" id="pub-announcements"><div class="container"><button class="back-to-home-btn" onclick="showPubPage('home')">← Back</button><div class="section-title"><i data-lucide="megaphone"></i> All Announcements</div><div id="pub-announce-all">Loading...</div></div></div>
+      <div class="pub-page" id="pub-check-dues"><div class="container"><button class="back-to-home-btn" onclick="showPubPage('home')">← Back</button><div class="section-title"><i data-lucide="wallet"></i> Payments</div><div class="check-dues-box"><input class="form-input" id="check-name" placeholder="Enter your full name"><button class="btn-check" onclick="checkDues()"><i data-lucide="search"></i> Check Now</button><div class="dues-result" id="dues-result" style="display:none;"><div id="dues-result-name"></div><div class="dues-month-grid" id="dues-month-grid"></div><div id="dues-status-text"></div></div></div></div></div>
+      <div class="pub-page" id="pub-requests"><div class="container"><button class="back-to-home-btn" onclick="showPubPage('home')">← Back</button><div class="section-title"><i data-lucide="clipboard-list"></i> Service Request</div><div class="request-grid" id="request-types-grid"></div><div class="request-form" style="background:#fff; border-radius:16px; padding:20px;"><div><i data-lucide="file-edit"></i> Form — <span id="request-type-label">Maintenance Request</span></div><div class="form-row" style="display:grid; grid-template-columns:1fr; gap:12px; margin:16px 0;"><input class="form-input" id="request-name" placeholder="Full Name"><input class="form-input" id="request-unit" placeholder="Unit Number"><input class="form-input" id="request-phone" placeholder="Phone Number"><input class="form-input" id="request-subject" placeholder="Subject / Purpose"></div><button class="btn-check" onclick="submitServiceRequest()"><i data-lucide="mail"></i> Submit Request</button></div></div></div>
+      <div class="pub-page" id="pub-board"><div class="container"><button class="back-to-home-btn" onclick="showPubPage('home')">← Back</button><div class="section-title"><i data-lucide="crown"></i> Board of Directors</div><div id="public-board-list" class="member-grid">Loading...</div></div></div>
+      <div class="pub-page" id="pub-members"><div class="container"><button class="back-to-home-btn" onclick="showPubPage('home')">← Back</button><div class="section-title"><i data-lucide="users"></i> Member Directory</div><div class="filter-bar" style="margin-bottom:16px;"><input class="form-input" id="search-pub-members" placeholder="Search members..." onkeyup="filterPubMembers()"></div><div id="public-members-list" class="member-grid">Loading...</div></div></div>
+      <div class="pub-page" id="pub-polls"><div class="container"><button class="back-to-home-btn" onclick="showPubPage('home')">← Back</button><div class="section-title"><i data-lucide="vote"></i> Community Voting</div><div id="public-polling-container">Loading...</div></div></div>
+      <div class="pub-page" id="pub-gallery"><div class="container"><button class="back-to-home-btn" onclick="showPubPage('home')">← Back</button><div class="section-title"><i data-lucide="camera"></i> Event Gallery</div><div id="public-album-grid" class="album-grid">Loading...</div></div></div>
+      <div class="pub-page" id="pub-assets"><div class="container"><button class="back-to-home-btn" onclick="showPubPage('home')">← Back</button><div class="section-title"><i data-lucide="box"></i> Community Assets</div><div style="display:flex; justify-content:flex-end; margin-bottom:16px;"><button class="btn-check" style="width:auto; padding:8px 16px;" onclick="openAssetRequestModal()"><i data-lucide="clipboard-list"></i> Request Asset</button></div><div id="public-assets-grid" class="assets-grid">Loading...</div></div></div>
+
+      <!-- LOGIN MODAL -->
+      <div class="modal-overlay" id="login-modal"><div class="login-modal"><button class="modal-close" onclick="closeLoginModal()">✕</button><div style="font-size:28px"><i data-lucide="lock"></i></div><div class="login-modal-title">Admin Login</div><div class="login-modal-sub">Board Members Only</div><input class="form-input" type="text" id="login-username" placeholder="admin@email.com"><input class="form-input" type="password" id="login-password" placeholder="Password"><div style="display:flex; align-items:center; gap:8px; margin:12px 0;"><input type="checkbox" id="login-remember"><label>Remember me</label></div><button class="btn-login-submit" onclick="doAdminLogin()">Sign In →</button></div></div>
+
+      <!-- ASSET REQUEST MODAL -->
+      <div class="add-modal-overlay" id="asset-request-modal"><div class="add-modal"><div class="add-modal-title"><i data-lucide="clipboard-list"></i> Request Asset</div><div class="modal-grid"><input id="asset-request-name" placeholder="Full Name"><input id="asset-request-phone" placeholder="Phone"><select id="asset-request-select"></select><input type="number" id="asset-request-quantity" placeholder="Quantity" value="1"><input type="date" id="asset-request-date"><input type="date" id="asset-request-return" placeholder="Expected return"><textarea id="asset-request-purpose" rows="2" placeholder="Purpose"></textarea></div><div class="modal-actions"><button class="btn-cancel" onclick="closeAssetRequestModal()">Cancel</button><button class="btn-save" onclick="submitAssetRequest()">Submit</button></div></div></div>
+    </div>
+  </div>
+
+  <!-- MOBILE BOTTOM NAVIGATION -->
+  <nav class="pub-mobile-bottom-nav">
+    <button class="pub-mobile-tab" data-page="home" onclick="showPubPage('home', this)"><span class="pub-tab-icon"><i data-lucide="home"></i></span><span>Home</span></button>
+    <button class="pub-mobile-tab" data-page="events" onclick="showPubPage('events', this)"><span class="pub-tab-icon"><i data-lucide="calendar"></i></span><span>Events</span></button>
+    <div class="pub-fab-container"><button class="pub-mobile-fab" onclick="toggleQuickActionsSheet()"><i data-lucide="plus"></i></button></div>
+    <button class="pub-mobile-tab" data-page="members" onclick="showPubPage('members', this)"><span class="pub-tab-icon"><i data-lucide="users"></i></span><span>Community</span></button>
+    <button class="pub-mobile-tab" data-page="profile" onclick="showPubPage('profile', this)"><span class="pub-tab-icon"><i data-lucide="user"></i></span><span>Profile</span></button>
+  </nav>
+
+  <!-- QUICK ACTIONS SHEET -->
+  <div class="pub-actions-sheet-overlay" id="pub-actions-sheet-overlay" onclick="toggleQuickActionsSheet()"></div>
+  <div class="pub-actions-sheet" id="pub-actions-sheet"><div class="pub-sheet-handle"></div><div class="pub-sheet-title" style="margin-bottom:24px;">What would you like to do?</div>
+    <button class="pub-sheet-btn" onclick="handleSheetAction('requests')"><span class="pub-sheet-btn-icon"><i data-lucide="clipboard-list" style="color:var(--gold);"></i></span><div><div class="pub-sheet-btn-title">Create Service Request</div><div class="pub-sheet-btn-desc">Report an issue or problem</div></div></button>
+    <button class="pub-sheet-btn" onclick="handleSheetAction('check-dues')"><span class="pub-sheet-btn-icon"><i data-lucide="wallet" style="color:var(--gold);"></i></span><div><div class="pub-sheet-btn-title">Pay Dues / Make Payment</div><div class="pub-sheet-btn-desc">View and pay your dues</div></div></button>
+    <button class="pub-sheet-btn" onclick="handleSheetAction('assets')"><span class="pub-sheet-btn-icon"><i data-lucide="box" style="color:var(--gold);"></i></span><div><div class="pub-sheet-btn-title">Reserve Facility</div><div class="pub-sheet-btn-desc">Book clubhouse or amenities</div></div></button>
+    <button class="pub-sheet-btn" onclick="handleSheetAction('wa')"><span class="pub-sheet-btn-icon"><i data-lucide="message-square" style="color:var(--gold);"></i></span><div><div class="pub-sheet-btn-title">Contact Board</div><div class="pub-sheet-btn-desc">Send a message to the board</div></div></button>
+  </div>
+
+
+</div>
+
+<!-- ==================== ADMIN SHELL ==================== -->
+<div id="admin-shell">
+  <aside class="sidebar"><div class="sidebar-logo"><div class="logo-icon"><i data-lucide="home"></i>️</div><div class="logo-text">CommunityHub</div></div><div class="sidebar-community"><div class="community-name">The Hamilton HOA</div></div>
+    <nav class="sidebar-nav"><div class="nav-section">MAIN</div><div class="nav-item active" onclick="showAdminPage('dashboard',this)"><span><i data-lucide="bar-chart-2"></i></span>Dashboard</div><div class="nav-section">DATA</div><div class="nav-item" onclick="showAdminPage('members',this)"><span><i data-lucide="users"></i></span>Members Directory</div><div class="nav-item" onclick="showAdminPage('board',this)"><span><i data-lucide="crown"></i></span>Board Members</div><div class="nav-item" onclick="showAdminPage('dues',this)"><span><i data-lucide="wallet"></i></span>Membership Dues</div><div class="nav-item" onclick="showAdminPage('treasury',this)"><span><i data-lucide="landmark"></i></span>Financial Overview</div><div class="nav-section">SERVICES</div><div class="nav-item" onclick="showAdminPage('announcements',this)"><span><i data-lucide="megaphone"></i></span>Announcements</div><div class="nav-item" onclick="showAdminPage('events',this)"><span><i data-lucide="calendar"></i></span>Events</div><div class="nav-item" onclick="showAdminPage('polls',this)"><span><i data-lucide="vote"></i></span>Community Voting</div><div class="nav-item" onclick="showAdminPage('requests',this)"><span><i data-lucide="clipboard-list"></i></span>Service Requests</div><div class="nav-item" onclick="showAdminPage('gallery',this)"><span><i data-lucide="camera"></i></span>Event Gallery</div><div class="nav-item" onclick="showAdminPage('assets',this)"><span><i data-lucide="box"></i></span>Community Assets</div><div class="nav-item" onclick="showAdminPage('settings',this)"><span><i data-lucide="settings"></i></span>Settings</div></nav>
+    <div class="sidebar-footer"><div class="user-card"><div class="user-av">AD</div><div><div class="user-name">Board Admin</div><div class="user-role">Manager</div></div><button class="logout-btn" onclick="doAdminLogout()">⎋</button></div></div>
+  </aside>
+  <div class="admin-main">
+    <header class="topbar"><button class="admin-menu-btn" onclick="toggleAdminSidebar()"><i data-lucide="menu"></i></button><div><div class="topbar-title" id="admin-title">Dashboard</div><div class="topbar-sub" id="admin-sub">Overview</div></div><button class="pub-view-btn" onclick="doAdminLogout()"><i data-lucide="eye"></i> Portal</button></header>
+    <div class="admin-content">
+      <div class="a-page active" id="a-dashboard"><div class="stats-grid"><div class="stat-card primary"><div class="stat-icon primary"><i data-lucide="users"></i></div><div class="stat-num" id="stat-total-members">0</div><div class="stat-label">Households</div></div><div class="stat-card blue"><div class="stat-icon blue"><i data-lucide="user"></i></div><div class="stat-num" id="stat-total-residents">0</div><div class="stat-label">Residents</div></div><div class="stat-card yellow"><div class="stat-icon yellow"><i data-lucide="wallet"></i></div><div class="stat-num" id="stat-paid-dues">0</div><div class="stat-label">Paid</div></div><div class="stat-card red"><div class="stat-icon red">⚠️</div><div class="stat-num" id="stat-unpaid-dues">0</div><div class="stat-label">Unpaid</div></div></div><div class="charts-grid" style="display:grid; grid-template-columns:1fr; gap:20px;"><div class="chart-card"><div class="chart-card-title"><i data-lucide="bar-chart-2"></i> Dues Status</div><div class="chart-container" style="height:200px;"><canvas id="adm-dues-chart"></canvas></div></div><div class="chart-card"><div class="chart-card-title"><i data-lucide="trending-up"></i> Cash Flow</div><div class="chart-container" style="height:200px;"><canvas id="adm-treasury-chart"></canvas></div></div></div><div class="card"><div class="card-header">⚠️ Unpaid This Month</div><div class="card-body" id="dashboard-unpaid">Loading...</div></div></div>
+      <div class="a-page" id="a-members"><div class="page-header"><div><h2>Member Directory</h2><p id="members-stats"></p></div><button class="btn-add" onclick="openAddMemberModal()">＋ Add Member</button></div><div class="filter-bar"><input class="search-input" id="search-members" placeholder="Search..." onkeyup="filterMembers()"><select id="filter-status-members" onchange="filterMembers()"><option value="">All</option><option value="active">Active</option><option value="inactive">Inactive</option></select><button class="btn-sm solid" onclick="exportMembersToCSV()">Export</button></div><div class="card"><div class="table-wrapper"><table class="admin-table"><thead><tr><th>Name</th><th>Address</th><th>Residents</th><th>Phone</th><th>Status</th><th>Actions</th></tr></thead><tbody id="members-table-body"><tr><td colspan="6">Loading...</td></tr></tbody></table></div><div class="pagination"><span id="members-info"></span><div id="members-page-btns"></div></div></div></div>
+      <div class="a-page" id="a-board"><div class="page-header"><div><h2>Board Members</h2></div><button class="btn-add" onclick="openAddBoardMemberModal()">＋ Add</button></div><div class="card"><div class="table-wrapper"><table class="admin-table"><thead><tr><th>Order</th><th>Name</th><th>Position</th><th>Phone</th><th>Actions</th></tr></thead><tbody id="board-table-body"><tr><td colspan="5">Loading...</td></tr></tbody></table></div></div></div>
+      <div class="a-page" id="a-dues"><div class="page-header"><div><h2>Membership Dues</h2></div><div class="page-header-actions"><button class="btn-add" onclick="printDuesReport()" style="background:#3b82f6;"><i data-lucide="printer"></i>️ PDF</button><button class="btn-add" onclick="openRecordPaymentModal()">✔ Record</button></div></div><div class="view-toggle"><button class="toggle-btn active" onclick="switchDuesView('monthly')">Monthly</button><button class="toggle-btn" onclick="switchDuesView('matrix')">Matrix</button><select id="dues-year-select" onchange="changeDuesYear()"></select></div><div class="dues-period" id="dues-monthly-periods"></div><div class="dues-summary" id="dues-monthly-summary"><div class="dues-sum-card"><div>Collected</div><div id="total-collected">$0</div></div><div class="dues-sum-card"><div>Expected</div><div id="total-expected">$0</div></div></div><div class="card"><div class="table-wrapper" id="dues-table-monthly-container"><table class="admin-table"><thead><tr><th>Household</th><th>Phone</th><th>Status</th><th>Actions</th></tr></thead><tbody id="dues-table-body"></tbody></table></div><div class="table-wrapper" id="dues-table-matrix-container" style="display:none;"><table class="matrix-table"><thead><tr><th>No</th><th>Name</th><th>Jan</th><th>Feb</th><th>Mar</th><th>Apr</th><th>May</th><th>Jun</th><th>Jul</th><th>Aug</th><th>Sep</th><th>Oct</th><th>Nov</th><th>Dec</th></tr></thead><tbody id="dues-matrix-body"></tbody></table></div></div></div>
+      <div class="a-page" id="a-treasury"><div class="page-header"><div><h2>Financial Overview</h2></div><button class="btn-add" onclick="openAddTransactionModal()">＋ Record</button></div><div class="treasury-card main"><div class="treasury-amount white" id="treasury-balance">$0</div></div><div class="card"><div class="table-wrapper"><table class="admin-table"><thead><tr><th>Date</th><th>Description</th><th>Type</th><th>Amount</th></tr></thead><tbody id="treasury-table-body"></tbody></table></div></div></div>
+      <div class="a-page" id="a-announcements"><div class="page-header"><div><h2>Announcements</h2></div><button class="btn-add" onclick="openCreateAnnouncementModal()">＋ Create</button></div><div id="announcements-admin-list">Loading...</div></div>
+      <div class="a-page" id="a-events"><div class="page-header"><div><h2>Events</h2></div><button class="btn-add" onclick="openAddEventModal()">＋ Add</button></div><div class="card"><div class="table-wrapper"><table class="admin-table"><thead><tr><th>Date</th><th>Title</th><th>Type</th><th>Actions</th></tr></thead><tbody id="events-table-body"></tbody></table></div></div></div>
+      <div class="a-page" id="a-polls"><div class="page-header"><div><h2>Community Voting</h2></div><button class="btn-add" onclick="openCreatePollModal()">＋ Create Poll</button></div><div id="polls-admin-list">Loading...</div></div>
+      <div class="a-page" id="a-requests"><div class="page-header"><div><h2>Service Requests</h2></div></div><div class="card"><div class="table-wrapper"><table class="admin-table"><thead><tr><th>Requester</th><th>Type</th><th>Status</th><th>Actions</th></tr></thead><tbody id="requests-table-body"></tbody></table></div></div></div>
+      <div class="a-page" id="a-gallery"><div class="page-header"><div><h2>Event Gallery</h2></div><button class="btn-add" onclick="openAddGalleryModal()">＋ Add Album</button></div><div class="card"><div class="table-wrapper"><table class="admin-table"><thead><tr><th>Date</th><th>Album</th><th>Actions</th></tr></thead><tbody id="gallery-table-body"></tbody></table></div></div></div>
+      <div class="a-page" id="a-assets"><div class="page-header"><div><h2>Assets</h2></div><button class="btn-add" onclick="openAddAssetModal()">＋ Add Asset</button></div><div class="admin-tab-container"><button class="admin-tab-btn active" onclick="switchAssetsTab('assets')"><i data-lucide="box"></i> Assets</button><button class="admin-tab-btn" onclick="switchAssetsTab('loans')"><i data-lucide="clipboard-list"></i> Loans</button></div><div id="tab-content-assets" class="admin-tab-content active"><div class="card"><div class="table-wrapper"><table class="admin-table"><thead><tr><th>Asset</th><th>Stock</th><th>Condition</th><th>Actions</th></tr></thead><tbody id="assets-table-body"></tbody></table></div></div></div><div id="tab-content-loans" class="admin-tab-content"><div class="card"><div class="table-wrapper"><table class="admin-table"><thead><tr><th>Borrower</th><th>Asset</th><th>Status</th><th>Actions</th></tr></thead><tbody id="loans-table-body"></tbody></table></div></div></div></div>
+      <div class="a-page" id="a-settings"><div class="page-header"><div><h2>Settings</h2></div></div><div class="card"><div><label>Monthly Dues ($)</label><input id="settings-dues-amount" type="number" class="form-input"><label>Payment Account</label><textarea id="settings-payment-account" class="form-input" rows="2"></textarea><button class="btn-save" onclick="saveSettingsParameters()">Save</button></div><div style="margin-top:24px;"><label>New Password</label><input type="password" id="settings-pwd-new" class="form-input"><label>Confirm</label><input type="password" id="settings-pwd-confirm" class="form-input"><button class="btn-save" onclick="saveSettingsPassword()">Update Password</button></div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="add-modal-overlay" id="add-member-modal"><div class="add-modal"><div class="add-modal-title"><i data-lucide="plus"></i> Add Member</div><div class="modal-grid"><input id="add-name" placeholder="Full Name"><input id="add-email" placeholder="Email"><input id="add-unit" placeholder="Unit"><input id="add-phone" placeholder="Phone"><input id="add-address" placeholder="Address"><input type="number" id="add-residents" placeholder="Residents" value="1"><select id="add-status"><option value="active">Active</option><option value="inactive">Inactive</option></select></div><div class="modal-actions"><button class="btn-cancel" onclick="closeAddMemberModal()">Cancel</button><button class="btn-save" onclick="saveNewMember()">Save</button></div></div></div>
+<div class="add-modal-overlay" id="payment-modal"><div class="add-modal"><div class="add-modal-title"><i data-lucide="wallet"></i> Record Payment</div><div class="modal-grid"><select id="payment-member"></select><input type="month" id="payment-month"><input type="number" id="payment-duration" value="1" min="1"><input type="number" id="payment-amount" placeholder="Amount"><div id="payment-total-info" style="background:var(--surface2); padding:12px; border-radius:12px; text-align:center; font-weight:800;">$0</div></div><div class="modal-actions"><button class="btn-cancel" onclick="closePaymentModal()">Cancel</button><button class="btn-save" onclick="savePayment()">Save</button></div></div></div>
+<div class="add-modal-overlay" id="transaction-modal"><div class="add-modal"><div class="add-modal-title"><i data-lucide="wallet"></i> Transaction</div><div class="modal-grid"><input type="date" id="transaction-date"><input id="transaction-desc" placeholder="Description"><select id="transaction-type"><option value="income">Income</option><option value="expense">Expense</option></select><input type="number" id="transaction-amount" placeholder="Amount"></div><div class="modal-actions"><button class="btn-cancel" onclick="closeTransactionModal()">Cancel</button><button class="btn-save" onclick="saveTransaction()">Save</button></div></div></div>
+<div class="add-modal-overlay" id="announcement-modal"><div class="add-modal"><div class="add-modal-title"><i data-lucide="megaphone"></i> Announcement</div><div class="modal-grid"><input id="announcement-title" placeholder="Title"><textarea id="announcement-content" rows="3" placeholder="Content"></textarea><select id="announcement-category"><option value="info">Info</option><option value="urgent">Urgent</option><option value="event">Event</option></select><div style="font-size:12px; font-weight:bold; margin-top:8px;">Cover Image (Hybrid)</div><input type="file" id="announcement-file" accept="image/*" style="font-size:12px; padding:4px;"><input id="announcement-img-url" placeholder="OR Paste Image URL here" style="margin-top:4px;"></div><div class="modal-actions"><button class="btn-cancel" onclick="closeAnnouncementModal()">Cancel</button><button class="btn-save" onclick="saveAnnouncement()">Publish</button></div></div></div>
+<div class="add-modal-overlay" id="event-modal"><div class="add-modal"><div class="add-modal-title"><i data-lucide="calendar"></i> Add Event</div><div class="modal-grid"><input id="event-title" placeholder="Title"><input type="date" id="event-date"><input id="event-time" placeholder="Time"><select id="event-type"><option value="meeting">Meeting</option><option value="social">Social</option><option value="patrol">Patrol</option></select><textarea id="event-desc" rows="2" placeholder="Description"></textarea><div style="font-size:12px; font-weight:bold; margin-top:8px;">Event Cover (Hybrid)</div><input type="file" id="event-file" accept="image/*" style="font-size:12px; padding:4px;"><input id="event-img-url" placeholder="OR Paste Image URL here" style="margin-top:4px;"></div><div class="modal-actions"><button class="btn-cancel" onclick="closeEventModal()">Cancel</button><button class="btn-save" onclick="saveEvent()">Save</button></div></div></div>
+<div class="add-modal-overlay" id="poll-modal"><div class="add-modal"><div class="add-modal-title"><i data-lucide="vote"></i> Create Poll</div><div class="modal-grid"><input id="poll-question" placeholder="Question"><input id="poll-options" placeholder="Option1, Option2, Option3"></div><div class="modal-actions"><button class="btn-cancel" onclick="closePollModal()">Cancel</button><button class="btn-save" onclick="savePoll()">Publish</button></div></div></div>
+<div class="add-modal-overlay" id="board-member-modal"><div class="add-modal"><div class="add-modal-title"><i data-lucide="users"></i> Board Member</div><div class="modal-grid"><input type="hidden" id="board-id"><input id="board-name" placeholder="Name"><input id="board-position" placeholder="Position"><input id="board-phone" placeholder="Phone"><input type="number" id="board-order" placeholder="Order"></div><div class="modal-actions"><button class="btn-cancel" onclick="closeBoardMemberModal()">Cancel</button><button class="btn-save" onclick="saveBoardMember()">Save</button></div></div></div>
+<div class="add-modal-overlay" id="gallery-modal"><div class="add-modal"><div class="add-modal-title"><i data-lucide="camera"></i> Add Album</div><div class="modal-grid"><input type="hidden" id="gallery-id"><input id="gallery-name" placeholder="Album Name"><input type="date" id="gallery-date"><textarea id="gallery-desc" rows="2" placeholder="Description"></textarea><input id="gallery-link" placeholder="Google Photos Link"><input id="gallery-cover" placeholder="Cover Image URL (optional)"></div><div class="modal-actions"><button class="btn-cancel" onclick="closeGalleryModal()">Cancel</button><button class="btn-save" onclick="saveGallery()">Save</button></div></div></div>
+<div class="add-modal-overlay" id="asset-modal"><div class="add-modal"><div class="add-modal-title"><i data-lucide="box"></i> Add Asset</div><div class="modal-grid"><input type="hidden" id="asset-id"><input id="asset-name" placeholder="Asset Name"><input type="number" id="asset-total" placeholder="Total Quantity" value="1"><select id="asset-condition"><option value="good">Good</option><option value="maintenance">Maintenance</option><option value="damaged">Damaged</option></select><input id="asset-location" placeholder="Location"><textarea id="asset-desc" rows="2" placeholder="Description"></textarea></div><div class="modal-actions"><button class="btn-cancel" onclick="closeAssetModal()">Cancel</button><button class="btn-save" onclick="saveAsset()">Save</button></div></div></div>
+
+<!-- TOAST & PRINT AREA -->
+<div class="toast" id="toast"><i data-lucide="check-circle"></i> <span id="toast-msg"></span></div>
+<div id="print-area"></div>
+
+<script>
+// ============================================
+// COMMUNITYHUB GLOBAL - FULL SCRIPT
+// ============================================
+const SUPABASE_URL = 'https://vorapikzttyiuhinyyyd.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZvcmFwaWt6dHR5aXVoaW55eXlkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzMjYzNDEsImV4cCI6MjA5NjkwMjM0MX0.YcpSxHv31F7WDd_-R_-9my3GQo6ovbiIh297-iEE0y4';
+window.supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+let currentCommunityId = null, currentCommunityName = '';
+let allMembers = [], filteredMembers = [], currentPage = 1, itemsPerPage = 10, currentMonth = '2026-06';
+let allDues = [], allTreasury = [], allAnnouncements = [], allServiceRequests = [], allEvents = [], allPolls = [], allVotes = [], allBoardMembers = [], allGallery = [], allAssets = [], allLoans = [];
+let appSettings = {}, currentDuesView = 'monthly', currentDuesYear = 2026;
+let pubDuesChart = null, admDuesChart = null;
+
+// Helper functions
+// Image Upload & Compression Helpers
+async function compressImage(file, maxSizeKB=200) {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let width = img.width, height = img.height;
+        const maxDim = 1200;
+        if(width > maxDim || height > maxDim) {
+          if(width > height) { height *= maxDim/width; width = maxDim; }
+          else { width *= maxDim/height; height = maxDim; }
+        }
+        canvas.width = width; canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        
+        let quality = 0.9;
+        const tryCompress = () => {
+          const dataUrl = canvas.toDataURL('image/jpeg', quality);
+          const kb = Math.round((dataUrl.length * 0.75) / 1024);
+          if(kb > maxSizeKB && quality > 0.4) { quality -= 0.1; tryCompress(); }
+          else { resolve(dataUrl); }
+        };
+        tryCompress();
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+async function uploadImageToSupabase(dataUrl, bucketName='public_images') {
+  try {
+    const res = await fetch(dataUrl);
+    const blob = await res.blob();
+    const ext = blob.type.split('/')[1] || 'jpg';
+    const fileName = `img_${Date.now()}_${Math.random().toString(36).substring(2,7)}.${ext}`;
+    const { data, error } = await supabase.storage.from(bucketName).upload(fileName, blob, { contentType: blob.type });
+    if(error) throw error;
+    const { data: publicUrlData } = supabase.storage.from(bucketName).getPublicUrl(fileName);
+    return publicUrlData.publicUrl;
+  } catch(e) {
+    console.error('Upload failed:', e);
+    return null;
+  }
+}
+function escapeHtml(s) { if(!s) return ''; return s.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
+function formatCurrency(amt) { return new Intl.NumberFormat('en-US', {style:'currency', currency:'USD', minimumFractionDigits:0}).format(amt || 0); }
+function formatDate(d) { if(!d) return ''; return new Date(d).toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'}); }
+function showToast(msg) { const t = document.getElementById('toast'); document.getElementById('toast-msg').textContent = msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 2500); }
+
+// Load data functions
+async function loadMembers() { const {data} = await supabase.from('members').select('*').eq('community_id', currentCommunityId).order('full_name'); allMembers = data || []; filteredMembers = [...allMembers]; return data; }
+async function loadDues() { const {data} = await supabase.from('membership_dues').select('*').eq('community_id', currentCommunityId); allDues = data || []; return data; }
+async function loadTreasury() { const {data} = await supabase.from('treasury').select('*').eq('community_id', currentCommunityId).order('transaction_date', {ascending:false}); allTreasury = data || []; return data; }
+async function loadAnnouncements() { const {data} = await supabase.from('announcements').select('*').eq('community_id', currentCommunityId).order('created_at', {ascending:false}); allAnnouncements = data || []; return data; }
+async function loadServiceRequests() { const {data} = await supabase.from('service_requests').select('*, members(*)').eq('community_id', currentCommunityId).order('created_at', {ascending:false}); allServiceRequests = data || []; return data; }
+async function loadEvents() { const {data} = await supabase.from('events').select('*').eq('community_id', currentCommunityId).order('event_date', {ascending:true}); allEvents = data || []; return data; }
+async function loadPolls() { const {data:p} = await supabase.from('polls').select('*').eq('community_id', currentCommunityId).order('created_at', {ascending:false}); const {data:v} = await supabase.from('poll_votes').select('*').eq('community_id', currentCommunityId); allPolls = p || []; allVotes = v || []; }
+async function loadBoardMembers() { const {data} = await supabase.from('board_members').select('*, members(*)').eq('community_id', currentCommunityId).order('display_order'); allBoardMembers = data || []; return data; }
+async function loadAssets() { const {data} = await supabase.from('community_assets').select('*').eq('community_id', currentCommunityId).order('asset_name'); allAssets = data || []; return data; }
+async function loadLoans() { const {data} = await supabase.from('asset_loans').select('*, community_assets(*)').eq('community_id', currentCommunityId).order('created_at', {ascending:false}); allLoans = data || []; return data; }
+async function loadGallery() { const {data} = await supabase.from('communities').select('settings').eq('id', currentCommunityId).single(); try { allGallery = data?.settings?.gallery_albums ? JSON.parse(data.settings.gallery_albums) : []; } catch(e) { allGallery = []; } }
+async function loadSettings() { const {data} = await supabase.from('communities').select('settings').eq('id', currentCommunityId).single(); appSettings = data?.settings || {}; }
+
+// Initialize tenant
+async function initTenant() {
+  let subdomain = new URLSearchParams(location.search).get('community') || location.hostname.split('.')[0];
+  if(['localhost','127.0.0.1',''].includes(subdomain)) subdomain = 'thehamilton';
+  const {data, error} = await supabase.from('communities').select('*').eq('subdomain', subdomain).single();
+  if(error || !data) {
+    const {data:def} = await supabase.from('communities').select('*').eq('subdomain', 'thehamilton').single();
+    currentCommunityId = def?.id; currentCommunityName = def?.name;
+  } else { currentCommunityId = data.id; currentCommunityName = data.name; }
+  document.title = `CommunityHub — ${currentCommunityName}`;
+  document.getElementById('pub-topbar-date').textContent = new Date().toLocaleDateString('en-US', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+  await loadPublicData();
+}
+
+// Dues controls
+function initDuesControls() { generatePeriodButtons(); }
+function generatePeriodButtons() {
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  document.getElementById('dues-monthly-periods').innerHTML = months.map((m,i) => `<button class="period-btn ${currentMonth===`${currentDuesYear}-${String(i+1).padStart(2,'0')}`?'active':''}" data-month="${currentDuesYear}-${String(i+1).padStart(2,'0')}">${m} ${currentDuesYear}</button>`).join('');
+  document.querySelectorAll('.period-btn').forEach(btn => btn.onclick = () => { currentMonth = btn.dataset.month; generatePeriodButtons(); renderDuesTable(); });
+}
+async function changeDuesYear() { currentDuesYear = parseInt(document.getElementById('dues-year-select').value); currentMonth = `${currentDuesYear}-06`; generatePeriodButtons(); await renderDuesTable(); }
+function switchDuesView(view) {
+  currentDuesView = view;
+  document.getElementById('dues-table-monthly-container').style.display = view === 'monthly' ? 'block' : 'none';
+  document.getElementById('dues-table-matrix-container').style.display = view === 'matrix' ? 'block' : 'none';
+  document.getElementById('dues-monthly-summary').style.display = view === 'monthly' ? 'flex' : 'none';
+  renderDuesTable();
+}
+
+// Chart functions
+function renderDuesChart(canvasId, isAdmin) {
+  const canvas = document.getElementById(canvasId);
+  if(!canvas) return;
+  if(isAdmin && admDuesChart) admDuesChart.destroy();
+  const monthDues = allDues.filter(d => d.due_month === currentMonth);
+  const paid = allMembers.filter(m => monthDues.find(d => d.member_id === m.id && d.status === 'paid')).length;
+  const partial = allMembers.filter(m => monthDues.find(d => d.member_id === m.id && d.status === 'partial')).length;
+  const unpaid = allMembers.length - paid - partial;
+  const chart = new Chart(canvas, { type:'doughnut', data:{ labels:['Paid','Partial','Unpaid'], datasets:[{ data:[paid,partial,unpaid], backgroundColor:['#059669','#f59e0b','#cbd5e1'] }] }, options:{ responsive:true, maintainAspectRatio:false, cutout:'65%' } });
+  if(isAdmin) admDuesChart = chart; else pubDuesChart = chart;
+  return chart;
+}
+
+// Member functions
+async function renderMembersTable() {
+  const start = (currentPage-1)*itemsPerPage, end = start+itemsPerPage, pageData = filteredMembers.slice(start,end);
+  document.getElementById('members-table-body').innerHTML = pageData.map(m => `<tr><td><div class="name-cell"><div class="avatar-sm">${escapeHtml(m.full_name?.charAt(0)||'?')}</div>${escapeHtml(m.full_name)}</div></td><td>${escapeHtml(m.address||'-')}</td><td>${m.residents_count||1}</td><td><a class="whatsapp-btn" href="https://wa.me/${(m.phone||'').replace(/[^0-9]/g,'')}"><i data-lucide="phone"></i> ${m.phone||'-'}</a></td><td><span class="status-pill ${m.status==='active'?'paid':'unpaid'}">${m.status==='active'?'Active':'Inactive'}</span></td><td><button class="icon-btn danger" onclick="deleteMember(${m.id})"><i data-lucide="trash-2"></i></button></td></tr>`).join('');
+  document.getElementById('members-stats').innerHTML = `Total ${allMembers.length} households · ${allMembers.reduce((s,m)=>s+(m.residents_count||1),0)} residents`;
+  const totalPages = Math.ceil(filteredMembers.length/itemsPerPage);
+  document.getElementById('members-info').textContent = `Showing ${filteredMembers.length?start+1:0}-${Math.min(end,filteredMembers.length)} of ${filteredMembers.length}`;
+  document.getElementById('members-page-btns').innerHTML = Array.from({length:totalPages}, (_,i) => `<button class="page-btn ${i+1===currentPage?'active':''}" onclick="changeMembersPage(${i+1})">${i+1}</button>`).join('');
+}
+function changeMembersPage(p) { currentPage = p; renderMembersTable(); }
+function filterMembers() { const s = document.getElementById('search-members')?.value.toLowerCase()||'', st = document.getElementById('filter-status-members')?.value||''; filteredMembers = allMembers.filter(m => (!s || m.full_name?.toLowerCase().includes(s)) && (!st || m.status===st)); currentPage=1; renderMembersTable(); }
+async function saveNewMember() { const name = document.getElementById('add-name')?.value; if(!name) { showToast('Name required'); return; } await supabase.from('members').insert([{ community_id:currentCommunityId, full_name:name, email:document.getElementById('add-email')?.value||'', unit_number:document.getElementById('add-unit')?.value||'', phone:document.getElementById('add-phone')?.value||'', address:document.getElementById('add-address')?.value||'', residents_count:parseInt(document.getElementById('add-residents')?.value)||1, status:document.getElementById('add-status')?.value||'active' }]); showToast('Member added'); closeAddMemberModal(); await loadMembers(); filterMembers(); renderDashboard(); }
+async function deleteMember(id) { if(!confirm('Delete member?')) return; await supabase.from('members').delete().eq('id',id); showToast('Deleted'); await loadMembers(); filterMembers(); renderDashboard(); }
+function getMemberDuesAmount(mid) { const def = parseInt(appSettings?.monthly_dues_amount) || 150; try { const special = JSON.parse(appSettings?.special_dues_rates || '{}'); return special[mid] || def; } catch(e) { return def; } }
+
+// Dues rendering
+async function renderDuesTable() {
+  await loadDues(); await loadMembers(); await loadSettings();
+  if(currentDuesView === 'monthly') {
+    const monthDues = allDues.filter(d => d.due_month === currentMonth);
+    const data = allMembers.map(m => ({ ...m, due_status: monthDues.find(d => d.member_id === m.id)?.status || 'unpaid' }));
+    let collected = 0, expected = 0;
+    data.forEach(m => { const amt = getMemberDuesAmount(m.id); expected += amt; if(m.due_status === 'paid') collected += amt; else if(m.due_status === 'partial') collected += monthDues.find(d => d.member_id === m.id)?.paid_amount || Math.round(amt/2); });
+    document.getElementById('total-collected').innerHTML = formatCurrency(collected);
+    document.getElementById('total-expected').innerHTML = formatCurrency(expected);
+    document.getElementById('dues-table-body').innerHTML = data.map(m => `<tr><td><div class="name-cell"><div class="avatar-sm">${escapeHtml(m.full_name?.charAt(0)||'?')}</div>${escapeHtml(m.full_name)}</div></td><td><a class="whatsapp-btn" href="https://wa.me/${(m.phone||'').replace(/[^0-9]/g,'')}"><i data-lucide="phone"></i> ${m.phone||'-'}</a></td><td><span class="status-pill ${m.due_status==='paid'?'paid':(m.due_status==='partial'?'partial':'unpaid')}">${m.due_status==='paid'?'✓ Paid':(m.due_status==='partial'?'½ Partial':'✗ Unpaid')}</span></td><td><button class="icon-btn" onclick="remindWA('${escapeHtml(m.full_name)}','${m.phone||''}')"><i data-lucide="smartphone"></i></button><button class="icon-btn" onclick="openRecordPaymentModal(${m.id}, '${currentMonth}')" style="margin-left:5px;"><i data-lucide="wallet"></i></button></td></tr>`).join('');
+  } else {
+    let annualCollected = 0;
+    const months = [1,2,3,4,5,6,7,8,9,10,11,12];
+    document.getElementById('dues-matrix-body').innerHTML = allMembers.map((m,idx) => { let row = `<tr><td>${idx+1}</td><td style="font-weight:600;">${escapeHtml(m.full_name)}</td>`; months.forEach(mon => { const monthStr = `${currentDuesYear}-${String(mon).padStart(2,'0')}`; const payment = allDues.find(d => d.member_id === m.id && d.due_month === monthStr); const status = payment?.status || 'unpaid'; let cls='unpaid', lbl='–'; if(status==='paid') { cls='paid'; lbl='✓'; annualCollected += getMemberDuesAmount(m.id); } else if(status==='partial') { cls='partial'; lbl='½'; annualCollected += payment?.paid_amount || Math.round(getMemberDuesAmount(m.id)/2); } row += `<td><button class="matrix-status-btn ${cls}" onclick="quickPay('${m.id}','${monthStr}')">${lbl}</button></td>`; }); row += '</tr>'; return row; }).join('');
+    document.getElementById('annual-total-collected').innerHTML = formatCurrency(annualCollected);
+  }
+  renderDuesChart('adm-dues-chart', true);
+}
+async function quickPay(mid, month) { const amt = getMemberDuesAmount(mid); const today = new Date().toISOString().split('T')[0]; const existing = allDues.find(d => d.member_id == mid && d.due_month === month); if(existing) await supabase.from('membership_dues').update({ status:'paid', paid_amount:amt, payment_date:today }).eq('id', existing.id); else await supabase.from('membership_dues').insert([{ community_id:currentCommunityId, member_id:mid, due_month:month, amount:amt, paid_amount:amt, status:'paid', payment_date:today }]); showToast('Payment recorded'); await renderDuesTable(); }
+function remindWA(name, wa) { if(!wa) { showToast('No WhatsApp'); return; } window.open(`https://wa.me/${wa.replace(/[^0-9]/g,'')}?text=Hello%20${encodeURIComponent(name)}%2C%20reminder%20for%20your%20community%20dues.`); }
+async function savePayment() { const mid = document.getElementById('payment-member')?.value, month = document.getElementById('payment-month')?.value, monthsCount = parseInt(document.getElementById('payment-duration')?.value)||1, amount = parseInt(document.getElementById('payment-amount')?.value)||0; if(!mid || !month) { showToast('Complete fields'); return; } const expected = getMemberDuesAmount(mid); const status = amount >= expected ? 'paid' : (amount > 0 ? 'partial' : 'unpaid'); const today = new Date().toISOString().split('T')[0]; const [y,m] = month.split('-').map(Number); for(let i=0;i<monthsCount;i++) { let my = y + Math.floor((m-1+i)/12), mm = ((m-1+i)%12)+1; const target = `${my}-${String(mm).padStart(2,'0')}`; const existing = allDues.find(d => d.member_id == mid && d.due_month === target); if(existing) await supabase.from('membership_dues').update({ status, paid_amount:amount, payment_date:today }).eq('id', existing.id); else await supabase.from('membership_dues').insert([{ community_id:currentCommunityId, member_id:mid, due_month:target, amount:expected, paid_amount:amount, status, payment_date:today }]); } showToast('Payment saved'); closePaymentModal(); await renderDuesTable(); }
+function openRecordPaymentModal(mid, month) { const select = document.getElementById('payment-member'); select.innerHTML = '<option value="">Select</option>' + allMembers.map(m => `<option value="${m.id}" ${m.id==mid?'selected':''}>${escapeHtml(m.full_name)}</option>`).join(''); document.getElementById('payment-month').value = month || currentMonth; const updateTotal = () => { const dur = parseInt(document.getElementById('payment-duration').value)||1, amt = parseInt(document.getElementById('payment-amount').value)||0; document.getElementById('payment-total-info').innerHTML = formatCurrency(dur * amt); }; select.onchange = () => { const amt = getMemberDuesAmount(select.value); document.getElementById('payment-amount').value = amt; updateTotal(); }; document.getElementById('payment-amount').oninput = updateTotal; document.getElementById('payment-duration').oninput = updateTotal; updateTotal(); document.getElementById('payment-modal').classList.add('open'); }
+
+// Treasury
+async function renderTreasuryTable() { await loadTreasury(); let bal = 0; allTreasury.forEach(t => bal += t.type==='income' ? t.amount : -t.amount); document.getElementById('treasury-balance').innerHTML = formatCurrency(bal); document.getElementById('treasury-table-body').innerHTML = allTreasury.slice(0,20).map(t => `<tr><td>${formatDate(t.transaction_date)}</td><td>${escapeHtml(t.description)}</td><td><span class="trans-type ${t.type==='income'?'income':'expense'}">${t.type==='income'?'+ Income':'− Expense'}</span></td><td>${formatCurrency(t.amount)}</td></tr>`).join(''); }
+async function saveTransaction() { const date = document.getElementById('transaction-date')?.value, desc = document.getElementById('transaction-desc')?.value, type = document.getElementById('transaction-type')?.value, amt = parseInt(document.getElementById('transaction-amount')?.value); if(!date || !desc || !amt) { showToast('Complete fields'); return; } await supabase.from('treasury').insert([{ community_id:currentCommunityId, transaction_date:date, description:desc, type, amount:amt }]); showToast('Transaction saved'); closeTransactionModal(); await renderTreasuryTable(); await renderDashboard(); }
+
+// Announcements
+async function renderAnnouncements() { await loadAnnouncements(); const html = (a, i) => { const thumbImg = a.image_url || (i%3===0 ? 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=200&q=80' : (i%3===1 ? 'https://images.unsplash.com/photo-1533174000255-16ccb7bc141b?auto=format&fit=crop&w=200&q=80' : 'https://images.unsplash.com/photo-1584738766473-61c083514bf4?auto=format&fit=crop&w=200&q=80')); return `<div class="feed-card" style="display:flex; align-items:center; padding:16px; background:var(--surface); border-radius:20px; border:1px solid var(--border); margin-bottom:12px; cursor:pointer; gap:12px;" onclick="showAnnouncementDetail(${a.id})"><div style="width:48px; height:48px; border-radius:50%; background:var(--navy); display:flex; align-items:center; justify-content:center; color:var(--gold); flex-shrink:0;">${a.category==='urgent'?'<i data-lucide="alert-circle"></i>':(a.category==='event'?'<i data-lucide="party-popper"></i>':'<i data-lucide="megaphone"></i>')}</div><div style="flex:1;"><div style="font-weight:800; font-size:14px; margin-bottom:2px; color:var(--text);">${escapeHtml(a.title)}</div><div style="font-size:11px; color:var(--text-light); margin-bottom:6px;">${formatDate(a.created_at)}</div><div style="font-size:13px; color:var(--text-muted); line-height:1.4; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">${escapeHtml(a.content)}</div></div><div style="width:70px; height:50px; border-radius:12px; background:url('${thumbImg}') center/cover; flex-shrink:0;"></div><i data-lucide="chevron-right" style="color:var(--text-light); width:16px; flex-shrink:0;"></i></div>`; }; document.getElementById('pub-announce-list').innerHTML = allAnnouncements.slice(0,3).map(html).join('') || '<div>No announcements</div>'; document.getElementById('pub-announce-all').innerHTML = allAnnouncements.map(html).join('') || '<div>No announcements</div>'; document.getElementById('announcements-admin-list').innerHTML = allAnnouncements.map(a => `<div class="card" style="margin-bottom:12px; "><div><strong>${escapeHtml(a.title)}</strong> <span class="status-pill ${a.category==='urgent'?'unpaid':(a.category==='event'?'partial':'paid')}">${a.category}</span></div><div style="font-size:12px; margin:8px 0;">${escapeHtml(a.content.substring(0,100))}</div><div style="font-size:11px; color:var(--text-light);">${formatDate(a.created_at)}</div><button class="icon-btn danger" onclick="deleteAnnouncement(${a.id})"><i data-lucide="trash-2"></i></button></div>`).join(''); setTimeout(()=>lucide.createIcons(),50); }
+async function saveAnnouncement() { const title = document.getElementById('announcement-title')?.value, content = document.getElementById('announcement-content')?.value, cat = document.getElementById('announcement-category')?.value; let imgUrl = document.getElementById('announcement-img-url')?.value; const fileInput = document.getElementById('announcement-file'); if(!title || !content) { showToast('Title and content required'); return; } if (fileInput && fileInput.files && fileInput.files[0]) { try { showToast('Compressing image...'); const dataUrl = await compressImage(fileInput.files[0], 200); showToast('Uploading image...'); const uploadedUrl = await uploadImageToSupabase(dataUrl, 'public_images'); if (uploadedUrl) imgUrl = uploadedUrl; } catch(e) { showToast('Image upload failed, using text only.'); } } await supabase.from('announcements').insert([{ community_id:currentCommunityId, title, content, category:cat, is_pinned:false, image_url: imgUrl || null }]); showToast('Published'); closeAnnouncementModal(); await renderAnnouncements(); }
+async function deleteAnnouncement(id) { if(!confirm('Delete?')) return; const a = allAnnouncements.find(x => x.id === id); if (a && a.image_url && a.image_url.includes('supabase.co')) { try { const parts = a.image_url.split('/public_images/'); if (parts.length > 1) { await supabase.storage.from('public_images').remove([parts[1]]); } } catch(e) { console.log('Failed to delete image', e); } } await supabase.from('announcements').delete().eq('id', id); showToast('Deleted'); await renderAnnouncements(); }
+
+// Events
+async function renderEvents() { await loadEvents(); document.getElementById('events-table-body').innerHTML = allEvents.map(e => `<tr><td>${formatDate(e.event_date)}</td><td>${escapeHtml(e.title)}</td><td><span class="status-pill ${e.type==='patrol'?'partial':'paid'}">${e.type}</span></td><td><button class="icon-btn danger" onclick="deleteEvent(${e.id})"><i data-lucide="trash-2"></i></button></td></tr>`).join(''); }
+async function saveEvent() { const title = document.getElementById('event-title')?.value, date = document.getElementById('event-date')?.value, time = document.getElementById('event-time')?.value, type = document.getElementById('event-type')?.value, desc = document.getElementById('event-desc')?.value; let imgUrl = document.getElementById('event-img-url')?.value; const fileInput = document.getElementById('event-file'); if(!title || !date) { showToast('Title and date required'); return; } if (fileInput && fileInput.files && fileInput.files[0]) { try { showToast('Compressing image...'); const dataUrl = await compressImage(fileInput.files[0], 200); showToast('Uploading image...'); const uploadedUrl = await uploadImageToSupabase(dataUrl, 'public_images'); if (uploadedUrl) imgUrl = uploadedUrl; } catch(e) { showToast('Image upload failed, using text only.'); } } await supabase.from('events').insert([{ community_id:currentCommunityId, title, event_date:date, event_time:time, type, description:desc, image_url: imgUrl || null }]); showToast('Event saved'); closeEventModal(); await renderEvents(); await loadPublicEvents(); }
+async function deleteEvent(id) { if(!confirm('Delete?')) return; const e = allEvents.find(x => x.id === id); if (e && e.image_url && e.image_url.includes('supabase.co')) { try { const parts = e.image_url.split('/public_images/'); if (parts.length > 1) { await supabase.storage.from('public_images').remove([parts[1]]); } } catch(err) { console.log('Failed to delete image', err); } } await supabase.from('events').delete().eq('id', id); showToast('Deleted'); await renderEvents(); await loadPublicEvents(); }
+async function loadPublicEvents() { const {data} = await supabase.from('events').select('*').eq('community_id', currentCommunityId).gte('event_date', new Date().toISOString().split('T')[0]).order('event_date').limit(3); document.getElementById('pub-events-list').innerHTML = (data||[]).map((e,i) => { const eventImg = e.image_url || (i%2===0 ? 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=400&q=80' : 'https://images.unsplash.com/photo-1528605248644-14dd04022da1?auto=format&fit=crop&w=400&q=80'); return `<div class="event-slide-card" style="min-width:240px; background:var(--surface); border-radius:24px; overflow:hidden; border:1px solid var(--border); box-shadow:0 4px 10px rgba(0,0,0,0.03);"><div style="padding:16px; display:flex; gap:16px;"><div style="text-align:center;"><div style="font-size:10px; font-weight:800; color:var(--primary); text-transform:uppercase;">${new Date(e.event_date).toLocaleDateString('en-US',{month:'short'})}</div><div style="font-size:24px; font-weight:800; color:var(--text); line-height:1;">${new Date(e.event_date).getDate()}</div></div><div><div style="font-weight:800; font-size:15px; margin-bottom:4px; color:var(--text);">${escapeHtml(e.title)}</div><div style="font-size:11px; color:var(--text-light);">${e.event_time||'TBA'}</div></div></div><div style="height:120px; background:url('${eventImg}') center/cover;"></div></div>`; }).join('') || '<div>No upcoming events</div>'; setTimeout(()=>lucide.createIcons(),50); }
+
+// Polls
+async function renderVotingAdmin() { await loadPolls(); document.getElementById('polls-admin-list').innerHTML = allPolls.map(p => { const votes = allVotes.filter(v => v.poll_id === p.id); const total = votes.length; return `<div class="card" style="margin-bottom:16px;"><div><strong>${escapeHtml(p.question)}</strong> <span class="status-pill ${p.status==='active'?'paid':'unpaid'}">${p.status}</span></div><div>Total votes: ${total}</div><button class="btn-sm solid" onclick="togglePollStatus(${p.id})">${p.status==='active'?'Close':'Open'}</button> <button class="icon-btn danger" onclick="deletePoll(${p.id})"><i data-lucide="trash-2"></i></button></div>`; }).join(''); }
+async function togglePollStatus(id) { const poll = allPolls.find(p => p.id === id); const newStatus = poll.status === 'active' ? 'closed' : 'active'; await supabase.from('polls').update({ status: newStatus }).eq('id', id); await renderVotingAdmin(); await loadPublicPolls(); }
+async function deletePoll(id) { if(!confirm('Delete poll?')) return; await supabase.from('polls').delete().eq('id', id); await renderVotingAdmin(); await loadPublicPolls(); }
+async function savePoll() { const q = document.getElementById('poll-question')?.value, optsRaw = document.getElementById('poll-options')?.value; if(!q || !optsRaw) { showToast('Enter question and options'); return; } const opts = optsRaw.split(',').map(o => o.trim()); if(opts.length < 2) { showToast('Need at least 2 options'); return; } await supabase.from('polls').insert([{ community_id:currentCommunityId, question:q, options:opts, status:'active' }]); showToast('Poll created'); closePollModal(); await renderVotingAdmin(); await loadPublicPolls(); }
+async function loadPublicPolls() { await loadPolls(); const voterId = localStorage.getItem('communityhub_voter') || (() => { const id = 'voter_'+Math.random().toString(36).substring(2,15); localStorage.setItem('communityhub_voter', id); return id; })(); document.getElementById('public-polling-container').innerHTML = allPolls.map(p => { const votes = allVotes.filter(v => v.poll_id === p.id); const userVote = votes.find(v => v.voter_id === voterId); const total = votes.length; if(p.status === 'closed' || userVote) { const optsHtml = p.options.map(opt => { const count = votes.filter(v => v.choice === opt).length; const pct = total ? Math.round(count/total*100) : 0; return `<div><div style="display:flex; justify-content:space-between;"><span>${escapeHtml(opt)}</span><span>${count} (${pct}%)</span></div><div style="background:#e2e8f0; border-radius:10px; height:6px; margin:4px 0;"><div style="width:${pct}%; background:var(--primary); height:6px; border-radius:10px;"></div></div></div>`; }).join(''); return `<div class="card" style="padding:16px;"><div><strong>${escapeHtml(p.question)}</strong> <span class="status-pill ${p.status==='active'?'paid':'unpaid'}">${p.status==='active'?'Open':'Closed'}</span></div><div style="margin-top:12px;">${optsHtml}</div><div style="font-size:11px; margin-top:8px;">Total: ${total} votes</div></div>`; } else { const optsHtml = p.options.map(opt => `<label style="display:block; margin:8px 0;"><input type="radio" name="poll_${p.id}" value="${escapeHtml(opt)}"> ${escapeHtml(opt)}</label>`).join(''); return `<div class="card" style="padding:16px;"><div><strong>${escapeHtml(p.question)}</strong></div>${optsHtml}<button class="btn-check" style="margin-top:12px;" onclick="castVote(${p.id})">Submit Vote</button></div>`; } }).join(''); }
+async function castVote(pollId) { const selected = document.querySelector(`input[name="poll_${pollId}"]:checked`); if(!selected) { showToast('Select an option'); return; } const voterId = localStorage.getItem('communityhub_voter'); const {error} = await supabase.from('poll_votes').insert([{ community_id:currentCommunityId, poll_id:pollId, choice:selected.value, voter_id:voterId }]); if(error) showToast('Error: '+error.message); else { showToast('Vote recorded'); await loadPublicPolls(); } }
+
+// Board members
+async function renderBoardAdmin() { await loadBoardMembers(); document.getElementById('board-table-body').innerHTML = allBoardMembers.map(b => `<tr><td>${b.display_order||0}</td><td>${escapeHtml(b.full_name)}</td><td>${escapeHtml(b.position)}</td><td>${b.phone||'-'}</td><td><button class="icon-btn" onclick="openEditBoardMember(${b.id})"><i data-lucide="edit-2"></i></button> <button class="icon-btn danger" onclick="deleteBoardMember(${b.id})"><i data-lucide="trash-2"></i></button></td></tr>`).join(''); setTimeout(()=>lucide.createIcons(),50); }
+async function saveBoardMember() { const id = document.getElementById('board-id')?.value, name = document.getElementById('board-name')?.value, pos = document.getElementById('board-position')?.value, phone = document.getElementById('board-phone')?.value, order = parseInt(document.getElementById('board-order')?.value)||0; if(!name || !pos) { showToast('Name and position required'); return; } if(id) await supabase.from('board_members').update({ full_name:name, position:pos, phone, display_order:order }).eq('id', id); else await supabase.from('board_members').insert([{ community_id:currentCommunityId, full_name:name, position:pos, phone, display_order:order }]); showToast('Saved'); closeBoardMemberModal(); await renderBoardAdmin(); await renderPublicBoard(); }
+async function deleteBoardMember(id) { if(!confirm('Delete?')) return; await supabase.from('board_members').delete().eq('id', id); showToast('Deleted'); await renderBoardAdmin(); await renderPublicBoard(); }
+function openEditBoardMember(id) { const b = allBoardMembers.find(m => m.id === id); if(!b) return; document.getElementById('board-id').value = b.id; document.getElementById('board-name').value = b.full_name; document.getElementById('board-position').value = b.position; document.getElementById('board-phone').value = b.phone||''; document.getElementById('board-order').value = b.display_order||0; document.getElementById('board-member-modal').classList.add('open'); }
+async function renderPublicBoard() { await loadBoardMembers(); document.getElementById('public-board-list').innerHTML = (allBoardMembers||[]).map(b => `<div class="board-card ${b.position?.toLowerCase().includes('president')?'president':''}"><div class="board-avatar">${(b.full_name?.charAt(0)||'B').toUpperCase()}</div><div class="board-info"><div class="board-role">${escapeHtml(b.position)}</div><div class="board-name">${escapeHtml(b.full_name)}</div></div>${b.phone ? `<a class="board-contact-btn" href="https://wa.me/${b.phone.replace(/[^0-9]/g,'')}"><i data-lucide="message-square"></i> Contact</a>` : ''}</div>`).join(''); }
+
+// Gallery
+async function renderGalleryAdmin() { await loadGallery(); document.getElementById('gallery-table-body').innerHTML = allGallery.map(g => `<tr><td>${formatDate(g.date)}</td><td>${escapeHtml(g.name)}</td><td><button class="icon-btn" onclick="editGallery('${g.id}')"><i data-lucide="edit-2"></i></button> <button class="icon-btn danger" onclick="deleteGallery('${g.id}')"><i data-lucide="trash-2"></i></button></td></tr>`).join(''); }
+async function saveGallery() { const id = document.getElementById('gallery-id')?.value, name = document.getElementById('gallery-name')?.value, date = document.getElementById('gallery-date')?.value, desc = document.getElementById('gallery-desc')?.value, link = document.getElementById('gallery-link')?.value, cover = document.getElementById('gallery-cover')?.value; if(!name || !date || !link) { showToast('Name, date, and link required'); return; } if(id) { const idx = allGallery.findIndex(g => g.id === id); if(idx !== -1) allGallery[idx] = { id, name, date, description:desc, link, cover_url:cover }; } else allGallery.push({ id:Date.now().toString(), name, date, description:desc, link, cover_url:cover }); await supabase.from('communities').update({ settings: { ...appSettings, gallery_albums: JSON.stringify(allGallery) } }).eq('id', currentCommunityId); showToast('Saved'); closeGalleryModal(); await renderGalleryAdmin(); await renderPublicGallery(); }
+async function deleteGallery(id) { if(!confirm('Delete?')) return; allGallery = allGallery.filter(g => g.id !== id); await supabase.from('communities').update({ settings: { ...appSettings, gallery_albums: JSON.stringify(allGallery) } }).eq('id', currentCommunityId); showToast('Deleted'); await renderGalleryAdmin(); await renderPublicGallery(); }
+async function renderPublicGallery() { await loadGallery(); document.getElementById('public-album-grid').innerHTML = (allGallery||[]).map(g => `<div class="album-card"><div class="album-card-preview"><img src="${g.cover_url || 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'200\' height=\'120\' viewBox=\'0 0 200 120\'%3E%3Crect width=\'200\' height=\'120\' fill=\'%23059669\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' fill=\'white\' dy=\'.3em\'%3E<i data-lucide="camera"></i>%3C/text%3E%3C/svg%3E'}" alt="${escapeHtml(g.name)}" style="width:100%; height:120px; object-fit:cover;"></div><div class="album-card-body"><div class="album-card-title">${escapeHtml(g.name)}</div><div class="album-card-meta"><i data-lucide="calendar"></i> ${formatDate(g.date)}</div><div class="album-card-desc">${escapeHtml(g.description||'')}</div><a class="album-card-btn" href="${escapeHtml(g.link)}" target="_blank">View Album ➔</a></div></div>`).join(''); }
+
+// Assets
+async function renderAssetsAdmin() { await loadAssets(); await loadLoans(); if(currentAssetsTab === 'assets') document.getElementById('assets-table-body').innerHTML = allAssets.map(a => `<tr><td>${escapeHtml(a.asset_name)}</td><td>${a.available_quantity}/${a.total_quantity}</td><td><span class="badge-condition ${a.condition}">${a.condition}</span></td><td><button class="icon-btn" onclick="editAsset(${a.id})"><i data-lucide="edit-2"></i></button> <button class="icon-btn danger" onclick="deleteAsset(${a.id})"><i data-lucide="trash-2"></i></button></td></tr>`).join(''); else document.getElementById('loans-table-body').innerHTML = allLoans.map(l => { const asset = allAssets.find(a => a.id === l.asset_id); return `<tr><td>${escapeHtml(l.borrower_name)}</td><td>${asset?.asset_name || '-'}</td><td><span class="status-pill ${l.status==='pending'?'partial':(l.status==='approved'?'paid':'unpaid')}">${l.status}</span></td><td><button class="btn-sm solid" onclick="processLoan(${l.id}, 'approve')" ${l.status!=='pending'?'disabled':''}>Approve</button> <button class="btn-sm solid" onclick="processLoan(${l.id}, 'return')" ${l.status!=='approved'?'disabled':''}>Return</button> <button class="icon-btn danger" onclick="processLoan(${l.id}, 'reject')"><i data-lucide="trash-2"></i></button></td></tr>`; }).join(''); setTimeout(()=>lucide.createIcons(),50); }
+async function saveAsset() { const id = document.getElementById('asset-id')?.value, name = document.getElementById('asset-name')?.value, total = parseInt(document.getElementById('asset-total')?.value)||0, cond = document.getElementById('asset-condition')?.value, loc = document.getElementById('asset-location')?.value, desc = document.getElementById('asset-desc')?.value; if(!name || total<=0) { showToast('Name and total required'); return; } if(id) await supabase.from('community_assets').update({ asset_name:name, total_quantity:total, available_quantity:total, condition:cond, location:loc, description:desc }).eq('id', id); else await supabase.from('community_assets').insert([{ community_id:currentCommunityId, asset_name:name, total_quantity:total, available_quantity:total, condition:cond, location:loc, description:desc }]); showToast('Saved'); closeAssetModal(); await renderAssetsAdmin(); await renderPublicAssets(); }
+async function deleteAsset(id) { if(!confirm('Delete?')) return; await supabase.from('community_assets').delete().eq('id', id); showToast('Deleted'); await renderAssetsAdmin(); await renderPublicAssets(); }
+async function renderPublicAssets() { await loadAssets(); document.getElementById('public-assets-grid').innerHTML = allAssets.map(a => `<div class="asset-card"><div class="asset-card-header"><i data-lucide="box"></i> ${escapeHtml(a.asset_name)}</div><div class="asset-card-body"><div class="asset-meta-item"><i data-lucide="map-pin"></i> ${escapeHtml(a.location||'-')}</div><div class="asset-meta-item"><i data-lucide="wrench"></i> <span class="badge-condition ${a.condition}">${a.condition}</span></div><div class="asset-meta-item"><i data-lucide="hash"></i> Available: ${a.available_quantity}/${a.total_quantity}</div><div class="asset-card-desc">${escapeHtml(a.description||'')}</div></div></div>`).join(''); }
+async function submitAssetRequest() { const name = document.getElementById('asset-request-name')?.value, phone = document.getElementById('asset-request-phone')?.value, assetId = document.getElementById('asset-request-select')?.value, qty = parseInt(document.getElementById('asset-request-quantity')?.value)||1, date = document.getElementById('asset-request-date')?.value, ret = document.getElementById('asset-request-return')?.value, purpose = document.getElementById('asset-request-purpose')?.value; if(!name || !phone || !assetId || !date) { showToast('Complete required fields'); return; } await supabase.from('asset_loans').insert([{ community_id:currentCommunityId, asset_id:assetId, borrower_name:name, borrower_phone:phone, quantity:qty, loan_date:date, expected_return_date:ret||null, status:'pending', purpose }]); showToast('Request submitted'); closeAssetRequestModal(); await renderAssetsAdmin(); }
+async function processLoan(id, action) { const {data:loan} = await supabase.from('asset_loans').select('*, community_assets(*)').eq('id', id).single(); if(!loan) return; if(action === 'approve') { await supabase.from('asset_loans').update({ status:'approved' }).eq('id', id); await supabase.from('community_assets').update({ available_quantity: loan.community_assets.available_quantity - loan.quantity }).eq('id', loan.asset_id); showToast('Approved'); } else if(action === 'return') { await supabase.from('asset_loans').update({ status:'returned', actual_return_date: new Date().toISOString().split('T')[0] }).eq('id', id); const newAvail = Math.min(loan.community_assets.total_quantity, loan.community_assets.available_quantity + loan.quantity); await supabase.from('community_assets').update({ available_quantity: newAvail }).eq('id', loan.asset_id); showToast('Returned'); } else if(action === 'reject') { await supabase.from('asset_loans').update({ status:'rejected' }).eq('id', id); showToast('Rejected'); } await renderAssetsAdmin(); await renderPublicAssets(); }
+
+// Service requests
+async function renderRequestsAdmin() { await loadServiceRequests(); document.getElementById('requests-table-body').innerHTML = allServiceRequests.map(r => `<tr><td><div><strong>${escapeHtml(r.requester_name)}</strong><br><span style="font-size:11px;">${r.unit_number||''}</span></div></div></td><td>${escapeHtml(r.request_type)}<br><span style="font-size:10px;">${escapeHtml(r.subject||'')}</span></div></td><td><span class="status-pill ${r.status==='completed'?'paid':(r.status==='rejected'?'unpaid':'partial')}">${r.status}</span></div></td><td><button class="btn-sm solid" onclick="updateRequestStatus(${r.id}, 'completed')">✓</button> <button class="btn-sm solid" onclick="updateRequestStatus(${r.id}, 'rejected')" style="background:#ef4444;">✗</button> <button class="icon-btn danger" onclick="deleteRequest(${r.id})"><i data-lucide="trash-2"></i></button></div></tr>`).join(''); }
+async function updateRequestStatus(id, status) { await supabase.from('service_requests').update({ status }).eq('id', id); showToast('Updated'); await renderRequestsAdmin(); }
+async function deleteRequest(id) { if(!confirm('Delete?')) return; await supabase.from('service_requests').delete().eq('id', id); showToast('Deleted'); await renderRequestsAdmin(); }
+
+// Public functions
+async function checkDues() { const name = document.getElementById('check-name')?.value; if(!name) { showToast('Enter name'); return; } await loadMembers(); const member = allMembers.find(m => m.full_name?.toLowerCase().includes(name.toLowerCase())); if(!member) { showToast('Member not found'); return; } await loadDues(); const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC']; let html = '', paidCount = 0; for(let i=0;i<12;i++) { const monthStr = `${currentDuesYear}-${String(i+1).padStart(2,'0')}`; const payment = allDues.find(d => d.member_id === member.id && d.due_month === monthStr); const status = payment?.status || 'unpaid'; if(status === 'paid') paidCount++; html += `<div class="dues-month-item ${status==='paid'||status==='partial'?'paid':'unpaid'}">${months[i]}<br>${status==='paid'?'✓':(status==='partial'?'½':'✗')}</div>`; } document.getElementById('dues-month-grid').innerHTML = html; document.getElementById('dues-result-name').innerHTML = `Household of ${escapeHtml(member.full_name)}`; document.getElementById('dues-status-text').innerHTML = paidCount >= 12 ? '<i data-lucide="check-circle"></i> All dues paid!' : `⚠️ ${12-paidCount} months unpaid.<br><small>Transfer to: ${escapeHtml(appSettings?.payment_account || 'Community account')}</small>`; document.getElementById('dues-result').style.display = 'block'; }
+async function submitServiceRequest() { const type = document.getElementById('request-type-label')?.innerText || 'Maintenance'; const name = document.getElementById('request-name')?.value, unit = document.getElementById('request-unit')?.value, phone = document.getElementById('request-phone')?.value, subject = document.getElementById('request-subject')?.value; if(!name || !unit || !phone || !subject) { showToast('Complete all fields'); return; } await supabase.from('service_requests').insert([{ community_id:currentCommunityId, requester_name:name, unit_number:unit, phone, request_type:type, subject, status:'pending' }]); showToast('Request submitted'); document.getElementById('request-name').value = ''; document.getElementById('request-unit').value = ''; document.getElementById('request-phone').value = ''; document.getElementById('request-subject').value = ''; }
+function renderPublicMembers() { const search = document.getElementById('search-pub-members')?.value.toLowerCase()||''; const filtered = allMembers.filter(m => m.status === 'active' && (!search || m.full_name?.toLowerCase().includes(search))); document.getElementById('public-members-list').innerHTML = filtered.map(m => `<div class="member-card"><div class="member-avatar">${(m.full_name?.charAt(0)||'?').toUpperCase()}</div><div class="member-info"><div class="member-name">${escapeHtml(m.full_name)}</div><div class="member-address"><i data-lucide="map-pin"></i> ${escapeHtml(m.address||'Austin, TX')}</div><div class="member-badge">Active Member</div></div>${m.phone ? `<a class="member-wa-btn" href="https://wa.me/${m.phone.replace(/[^0-9]/g,'')}"><i data-lucide="message-square"></i></a>` : ''}</div>`).join('') || '<div>No members found</div>'; }
+function filterPubMembers() { renderPublicMembers(); }
+
+// Dashboard & Settings
+async function renderDashboard() { await loadMembers(); await loadDues(); const paidThisMonth = allDues.filter(d => d.due_month === currentMonth && d.status === 'paid').length; document.getElementById('stat-total-members').textContent = allMembers.length; document.getElementById('stat-total-residents').textContent = allMembers.reduce((s,m)=>s+(m.residents_count||1),0); document.getElementById('stat-paid-dues').textContent = paidThisMonth; document.getElementById('stat-unpaid-dues').textContent = allMembers.length - paidThisMonth; const unpaid = allMembers.filter(m => !allDues.find(d => d.member_id === m.id && d.due_month === currentMonth && d.status === 'paid')).slice(0,5); document.getElementById('dashboard-unpaid').innerHTML = unpaid.map(m => `<div style="padding:8px 0; border-bottom:1px solid var(--border);">${escapeHtml(m.full_name)} <span class="status-pill unpaid">Unpaid</span></div>`).join('') || '<div>All paid up!</div>'; renderDuesChart('adm-dues-chart', true); }
+async function saveSettingsParameters() { const amount = document.getElementById('settings-dues-amount')?.value, account = document.getElementById('settings-payment-account')?.value; if(!amount) { showToast('Enter dues amount'); return; } const newSettings = { ...appSettings, monthly_dues_amount: parseInt(amount), payment_account: account }; await supabase.from('communities').update({ settings: newSettings }).eq('id', currentCommunityId); showToast('Settings saved'); await loadSettings(); await renderDuesTable(); }
+async function saveSettingsPassword() { const newPwd = document.getElementById('settings-pwd-new')?.value, confirmPwd = document.getElementById('settings-pwd-confirm')?.value; if(!newPwd) { showToast('Enter new password'); return; } if(newPwd !== confirmPwd) { showToast('Passwords do not match'); return; } if(newPwd.length < 6) { showToast('Password must be at least 6 chars'); return; } const {error} = await supabase.auth.updateUser({ password: newPwd }); if(error) showToast('Error: '+error.message); else { showToast('Password updated'); document.getElementById('settings-pwd-new').value = ''; document.getElementById('settings-pwd-confirm').value = ''; } }
+
+
+// ========== SPRINT 4: PWA / DARK MODE / NOTIFICATIONS ==========
+function toggleDarkMode(checkbox) {
+  if(checkbox.checked) {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    localStorage.setItem('communityhub_theme', 'dark');
+  } else {
+    document.documentElement.setAttribute('data-theme', 'light');
+    localStorage.setItem('communityhub_theme', 'light');
+  }
+}
+async function toggleNotifications(checkbox) {
+  if(checkbox.checked) {
+    if (!("Notification" in window)) {
+      showToast("Browser does not support notifications");
+      checkbox.checked = false;
+      return;
+    }
+    const permission = await Notification.requestPermission();
+    if (permission === "granted") {
+      new Notification("CommunityHub", { body: "You will now receive important community updates." });
+      showToast("Notifications enabled!");
+    } else {
+      showToast("Permission denied");
+      checkbox.checked = false;
+    }
+  } else {
+    showToast("Notifications disabled");
+  }
+}
+
+// Public data load
+async function loadPublicData() { await Promise.all([loadMembers(), loadSettings(), loadAnnouncements(), loadEvents(), loadPolls(), loadBoardMembers(), loadTreasury(), loadServiceRequests(), loadGallery(), loadAssets()]); renderPublicMembers(); renderPublicBoard(); renderPublicGallery(); renderPublicAssets(); renderAnnouncements(); loadPublicEvents(); loadPublicPolls(); document.getElementById('pub-stat-members').textContent = allMembers.length; const totalIncome = allTreasury.filter(t => t.type==='income').reduce((s,t)=>s+t.amount,0); const totalExpense = allTreasury.filter(t => t.type==='expense').reduce((s,t)=>s+t.amount,0); document.getElementById('pub-stat-treasury').innerHTML = formatCurrency(totalIncome - totalExpense); const tDateEl = document.getElementById('pub-stat-treasury-date'); if(tDateEl) tDateEl.textContent = `Balance as of ${new Date().toLocaleDateString('en-US',{month:'long',year:'numeric'})}`; const upcomingEvents = await supabase.from('events').select('id').gte('event_date', new Date().toISOString().split('T')[0]); document.getElementById('pub-stat-events').textContent = upcomingEvents.data?.length || 0; const pendingReqs = allServiceRequests.filter(r => r.status === 'pending'); document.getElementById('pub-stat-requests').textContent = pendingReqs.length; /* renderDuesChart removed */ await initVisitorCounter(); }
+async function initVisitorCounter() { let stats = appSettings?.visitor_stats ? JSON.parse(appSettings.visitor_stats) : { total:0, daily:0, monthly:0 }; const today = new Date().toISOString().split('T')[0]; const thisMonth = new Date().toISOString().slice(0,7); if(!sessionStorage.getItem('communityhub_visited')) { sessionStorage.setItem('communityhub_visited','1'); stats.total = (stats.total||0)+1; if(stats.last_day === today) stats.daily = (stats.daily||0)+1; else { stats.daily = 1; stats.last_day = today; } if(stats.last_month === thisMonth) stats.monthly = (stats.monthly||0)+1; else { stats.monthly = 1; stats.last_month = thisMonth; } await supabase.from('communities').update({ settings: { ...appSettings, visitor_stats: JSON.stringify(stats) } }).eq('id', currentCommunityId); } document.querySelectorAll('.visit-daily').forEach(el => el.textContent = stats.daily||0); document.querySelectorAll('.visit-monthly').forEach(el => el.textContent = stats.monthly||0); document.querySelectorAll('.visit-total').forEach(el => el.textContent = stats.total||0); }
+
+// Navigation & UI helpers
+function showPubPage(page, btn) { document.querySelectorAll('.pub-page').forEach(p => p.classList.remove('active')); document.getElementById(`pub-${page}`)?.classList.add('active'); document.querySelectorAll('.pub-sidebar-item, .pub-sidebar-link, .pub-mobile-tab').forEach(b => b.classList.remove('active')); if(btn) btn.classList.add('active'); else document.querySelectorAll(`[onclick*="showPubPage('${page}')"]`).forEach(b => b.classList.add('active')); if(page === 'members') renderPublicMembers(); if(page === 'board') renderPublicBoard(); if(page === 'gallery') renderPublicGallery(); if(page === 'assets') renderPublicAssets(); if(page === 'events') { document.getElementById('pub-events-all-list').innerHTML = document.getElementById('pub-events-list').innerHTML; lucide.createIcons(); } const sidebar = document.getElementById('pub-sidebar'); const backdrop = document.getElementById('pub-sidebar-backdrop'); if(sidebar?.classList.contains('open')) { sidebar.classList.remove('open'); backdrop?.classList.remove('open'); setTimeout(() => backdrop.style.display = 'none', 300); } }
+function showAdminPage(page, el) { document.querySelectorAll('.a-page').forEach(p => p.classList.remove('active')); document.getElementById(`a-${page}`)?.classList.add('active'); document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); if(el) el.classList.add('active'); document.getElementById('admin-title').innerHTML = { dashboard:'Dashboard', members:'Member Directory', board:'Board Members', dues:'Membership Dues', treasury:'Financial Overview', announcements:'Announcements', events:'Events', polls:'Voting', requests:'Requests', gallery:'Gallery', assets:'Assets', settings:'Settings' }[page] || 'Admin'; if(page === 'members') { loadMembers(); filterMembers(); } if(page === 'board') renderBoardAdmin(); if(page === 'dues') { initDuesControls(); renderDuesTable(); } if(page === 'treasury') renderTreasuryTable(); if(page === 'announcements') renderAnnouncements(); if(page === 'events') renderEvents(); if(page === 'polls') renderVotingAdmin(); if(page === 'requests') renderRequestsAdmin(); if(page === 'gallery') renderGalleryAdmin(); if(page === 'assets') { loadAssets(); loadLoans(); renderAssetsAdmin(); } if(page === 'settings') { loadSettings(); document.getElementById('settings-dues-amount').value = appSettings?.monthly_dues_amount || 150; document.getElementById('settings-payment-account').value = appSettings?.payment_account || ''; } const sidebar = document.querySelector('.sidebar'); if(sidebar?.classList.contains('open')) { sidebar.classList.remove('open'); document.getElementById('admin-sidebar-backdrop')?.remove(); } }
+function togglePublicSidebar() { const sidebar = document.getElementById('pub-sidebar'), backdrop = document.getElementById('pub-sidebar-backdrop'); if(!sidebar) return; if(sidebar.classList.contains('open')) { sidebar.classList.remove('open'); backdrop.classList.remove('open'); setTimeout(() => backdrop.style.display = 'none', 300); } else { backdrop.style.display = 'block'; backdrop.offsetHeight; sidebar.classList.add('open'); backdrop.classList.add('open'); } }
+function toggleQuickActionsSheet() { const overlay = document.getElementById('pub-actions-sheet-overlay'), sheet = document.getElementById('pub-actions-sheet'), fab = document.querySelector('.pub-mobile-fab'); if(!sheet) return; if(sheet.classList.contains('open')) { sheet.classList.remove('open'); fab?.classList.remove('open'); overlay.classList.remove('open'); setTimeout(() => overlay.style.display = 'none', 300); } else { overlay.style.display = 'block'; overlay.offsetHeight; sheet.classList.add('open'); fab?.classList.add('open'); overlay.classList.add('open'); } }
+function handleSheetAction(action) { toggleQuickActionsSheet(); if(action === 'wa') openWhatsAppFab(); else showPubPage(action); }
+function openWhatsAppFab() { window.open('https://wa.me/15551234567', '_blank'); }
+function toggleAdminSidebar() { const sidebar = document.querySelector('.sidebar'); if(!sidebar) return; sidebar.classList.toggle('open'); let backdrop = document.getElementById('admin-sidebar-backdrop'); if(!backdrop && sidebar.classList.contains('open')) { backdrop = document.createElement('div'); backdrop.id = 'admin-sidebar-backdrop'; backdrop.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:400;'; backdrop.onclick = toggleAdminSidebar; document.getElementById('admin-shell').appendChild(backdrop); } if(backdrop) backdrop.style.display = sidebar.classList.contains('open') ? 'block' : 'none'; }
+function searchPublicGlobal(val) { const active = document.querySelector('.pub-page.active'); if(!active) return; if(active.id === 'pub-members') { document.getElementById('search-pub-members').value = val; filterPubMembers(); } else if(active.id === 'pub-announcements') renderAnnouncements(); else if(active.id === 'pub-assets') renderPublicAssets(); else showPubPage('members'); }
+function exportMembersToCSV() { let csv = "Name,Email,Unit,Phone,Address,Residents,Status\n"; allMembers.forEach(m => csv += `"${m.full_name}","${m.email||''}","${m.unit_number||''}","${m.phone||''}","${m.address||''}",${m.residents_count||1},"${m.status}"\n`); const blob = new Blob([csv], {type:'text/csv'}); const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = 'members_export.csv'; link.click(); URL.revokeObjectURL(link.href); showToast('Export complete'); }
+function printDuesReport() { const printArea = document.getElementById('print-area'); const name = currentCommunityName || 'The Hamilton Residence'; printArea.innerHTML = `<div style="padding:20px;"><h2>Monthly Dues Report - ${name}</h2><p>Period: ${currentMonth}</p><table border="1" cellpadding="8" style="width:100%; border-collapse:collapse;"><tr><th>Member</th><th>Phone</th><th>Status</th><th>Amount</th></tr>${allMembers.map(m => { const payment = allDues.find(d => d.member_id === m.id && d.due_month === currentMonth); return `<tr><td>${escapeHtml(m.full_name)}</td><td>${m.phone||'-'}</td><td>${payment?.status||'unpaid'}</td><td>${formatCurrency(payment?.paid_amount||0)}</td></tr>`; }).join('')}</table></div>`; window.print(); }
+
+// Admin login
+async function doAdminLogin() { const email = document.getElementById('login-username')?.value, password = document.getElementById('login-password')?.value; if(!email || !password) { showToast('Enter email and password'); return; } const { data: authData, error: authError } = await supabase.auth.signInWithPassword({ email, password }); if(authError) { showToast('Login failed: '+authError.message); return; } const { data: memberData, error: memberError } = await supabase.from('community_members').select('role').eq('user_email', email).eq('community_id', currentCommunityId).single(); if(memberError || !memberData || memberData.role !== 'admin') { showToast('Not an admin for this community'); await supabase.auth.signOut(); return; } if(document.getElementById('login-remember')?.checked) { localStorage.setItem('admin_email', email); localStorage.setItem('admin_password', password); } else { localStorage.removeItem('admin_email'); localStorage.removeItem('admin_password'); } document.getElementById('login-modal').classList.remove('open'); document.getElementById('public-shell').style.display = 'none'; document.getElementById('admin-shell').style.display = 'block'; document.querySelector('.whatsapp-float')?.style.setProperty('display','none'); showToast('Welcome, Admin!'); await Promise.all([loadMembers(), loadDues(), loadTreasury(), loadAnnouncements(), loadServiceRequests(), loadEvents(), loadPolls(), loadBoardMembers(), loadAssets(), loadLoans(), loadGallery()]); renderMembersTable(); renderDashboard(); renderDuesTable(); renderTreasuryTable(); renderAnnouncements(); renderEvents(); renderVotingAdmin(); renderRequestsAdmin(); renderBoardAdmin(); renderGalleryAdmin(); renderAssetsAdmin(); }
+async function doAdminLogout() { await supabase.auth.signOut(); document.getElementById('admin-shell').style.display = 'none'; document.getElementById('public-shell').style.display = 'block'; document.querySelector('.whatsapp-float')?.style.setProperty('display','flex'); document.querySelector('.sidebar')?.classList.remove('open'); document.getElementById('admin-sidebar-backdrop')?.remove(); showToast('Logged out'); }
+function openLoginModal() { document.getElementById('login-username').value = localStorage.getItem('admin_email') || ''; document.getElementById('login-password').value = localStorage.getItem('admin_password') || ''; document.getElementById('login-modal').classList.add('open'); }
+function closeLoginModal() { document.getElementById('login-modal').classList.remove('open'); }
+function closeAddMemberModal() { document.getElementById('add-member-modal').classList.remove('open'); }
+function closePaymentModal() { document.getElementById('payment-modal').classList.remove('open'); }
+function closeTransactionModal() { document.getElementById('transaction-modal').classList.remove('open'); }
+function closeAnnouncementModal() { document.getElementById('announcement-modal').classList.remove('open'); }
+function closeEventModal() { document.getElementById('event-modal').classList.remove('open'); }
+function closePollModal() { document.getElementById('poll-modal').classList.remove('open'); }
+function closeBoardMemberModal() { document.getElementById('board-member-modal').classList.remove('open'); }
+function closeGalleryModal() { document.getElementById('gallery-modal').classList.remove('open'); }
+function closeAssetModal() { document.getElementById('asset-modal').classList.remove('open'); }
+function closeAssetRequestModal() { document.getElementById('asset-request-modal').classList.remove('open'); }
+function openAddMemberModal() { document.getElementById('add-member-modal').classList.add('open'); }
+function openAddBoardMemberModal() { document.getElementById('board-id').value = ''; document.getElementById('board-name').value = ''; document.getElementById('board-position').value = ''; document.getElementById('board-phone').value = ''; document.getElementById('board-order').value = ''; document.getElementById('board-member-modal').classList.add('open'); }
+function openCreateAnnouncementModal() { document.getElementById('announcement-modal').classList.add('open'); }
+function openAddEventModal() { document.getElementById('event-date').value = new Date().toISOString().split('T')[0]; document.getElementById('event-modal').classList.add('open'); }
+function openCreatePollModal() { document.getElementById('poll-modal').classList.add('open'); }
+function openAddTransactionModal() { document.getElementById('transaction-date').value = new Date().toISOString().split('T')[0]; document.getElementById('transaction-modal').classList.add('open'); }
+function openAddGalleryModal() { document.getElementById('gallery-id').value = ''; document.getElementById('gallery-name').value = ''; document.getElementById('gallery-date').value = new Date().toISOString().split('T')[0]; document.getElementById('gallery-desc').value = ''; document.getElementById('gallery-link').value = ''; document.getElementById('gallery-cover').value = ''; document.getElementById('gallery-modal').classList.add('open'); }
+function editGallery(id) { const g = allGallery.find(g => g.id === id); if(!g) return; document.getElementById('gallery-id').value = g.id; document.getElementById('gallery-name').value = g.name; document.getElementById('gallery-date').value = g.date; document.getElementById('gallery-desc').value = g.description||''; document.getElementById('gallery-link').value = g.link; document.getElementById('gallery-cover').value = g.cover_url||''; document.getElementById('gallery-modal').classList.add('open'); }
+function openAddAssetModal() { document.getElementById('asset-id').value = ''; document.getElementById('asset-name').value = ''; document.getElementById('asset-total').value = 1; document.getElementById('asset-condition').value = 'good'; document.getElementById('asset-location').value = ''; document.getElementById('asset-desc').value = ''; document.getElementById('asset-modal').classList.add('open'); }
+function editAsset(id) { const a = allAssets.find(a => a.id === id); if(!a) return; document.getElementById('asset-id').value = a.id; document.getElementById('asset-name').value = a.asset_name; document.getElementById('asset-total').value = a.total_quantity; document.getElementById('asset-condition').value = a.condition; document.getElementById('asset-location').value = a.location||''; document.getElementById('asset-desc').value = a.description||''; document.getElementById('asset-modal').classList.add('open'); }
+function openAssetRequestModal() { const select = document.getElementById('asset-request-select'); select.innerHTML = '<option value="">Select Asset</option>' + allAssets.map(a => `<option value="${a.id}">${escapeHtml(a.asset_name)} (${a.available_quantity} available)</option>`).join(''); document.getElementById('asset-request-date').value = new Date().toISOString().split('T')[0]; document.getElementById('asset-request-modal').classList.add('open'); }
+function switchAssetsTab(tab) { currentAssetsTab = tab; document.getElementById('tab-content-assets').style.display = tab === 'assets' ? 'block' : 'none'; document.getElementById('tab-content-loans').style.display = tab === 'loans' ? 'block' : 'none'; document.querySelectorAll('.admin-tab-btn').forEach(btn => btn.classList.remove('active')); document.querySelector(tab === 'assets' ? '.admin-tab-btn:first-child' : '.admin-tab-btn:last-child').classList.add('active'); renderAssetsAdmin(); }
+
+// Request type selector
+document.getElementById('request-types-grid') && (() => { const types = ['Maintenance Request','Service Request','Community Request','Facility Request','Other']; document.getElementById('request-types-grid').innerHTML = types.map(t => `<div class="request-card ${t==='Maintenance Request'?'selected':''}" onclick="selectRequestType(this,'${t}')"><div class="request-icon">${t==='Maintenance Request'?'<i data-lucide="wrench"></i>':(t==='Service Request'?'<i data-lucide="file-text"></i>':(t==='Community Request'?'<i data-lucide="home"></i>️':(t==='Facility Request'?'<i data-lucide="building"></i>':'<i data-lucide="file-edit"></i>')))}</div><div class="request-name">${t}</div></div>`).join(''); })();
+function selectRequestType(el, name) { document.querySelectorAll('.request-card').forEach(c => c.classList.remove('selected')); el.classList.add('selected'); document.getElementById('request-type-label').innerText = name; }
+
+// Initialize
+initTenant();
+lucide.createIcons();
+</script>
+</body>
+</html>
