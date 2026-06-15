@@ -921,16 +921,20 @@ input:checked + .toggle-slider:before { transform: translateX(20px); }
 }
 .toast {
   position: fixed;
-  top: 80px;
+  top: 20px;
   left: 50%;
-  transform: translateX(-50%) translateY(-100px);
+  transform: translateX(-50%) translateY(-150%);
   background: #1f2937;
   color: #fff;
   padding: 10px 20px;
   border-radius: 50px;
   font-size: 13px;
   z-index: 1000;
-  transition: transform 0.3s;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 .toast.show { transform: translateX(-50%) translateY(0); }
 
