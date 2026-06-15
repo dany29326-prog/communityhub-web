@@ -1335,7 +1335,7 @@ input:checked + .toggle-slider:before { transform: translateX(20px); }
 <div class="add-modal-overlay" id="payment-modal"><div class="add-modal"><div class="add-modal-title"><i data-lucide="wallet"></i> Record Payment</div><div class="modal-grid"><select id="payment-member"></select><input type="month" id="payment-month"><input type="number" id="payment-duration" value="1" min="1"><input type="number" id="payment-amount" placeholder="Amount"><div id="payment-total-info" style="background:var(--surface2); padding:12px; border-radius:12px; text-align:center; font-weight:800;">$0</div></div><div class="modal-actions"><button class="btn-cancel" onclick="closePaymentModal()">Cancel</button><button class="btn-save" onclick="savePayment()">Save</button></div></div></div>
 <div class="add-modal-overlay" id="transaction-modal"><div class="add-modal"><div class="add-modal-title"><i data-lucide="wallet"></i> Transaction</div><div class="modal-grid"><input type="date" id="transaction-date"><input id="transaction-desc" placeholder="Description"><select id="transaction-type"><option value="income">Income</option><option value="expense">Expense</option></select><input type="number" id="transaction-amount" placeholder="Amount"></div><div class="modal-actions"><button class="btn-cancel" onclick="closeTransactionModal()">Cancel</button><button class="btn-save" onclick="saveTransaction()">Save</button></div></div></div>
 <div class="add-modal-overlay" id="announcement-modal"><div class="add-modal"><div class="add-modal-title"><i data-lucide="megaphone"></i> Announcement</div><div class="modal-grid"><input id="announcement-title" placeholder="Title"><textarea id="announcement-content" rows="3" placeholder="Content"></textarea><select id="announcement-category"><option value="info">Info</option><option value="urgent">Urgent</option><option value="event">Event</option></select><div style="font-size:12px; font-weight:bold; margin-top:8px;">Cover Image (Hybrid)</div><input type="file" id="announcement-file" accept="image/*" style="font-size:12px; padding:4px;"><input id="announcement-img-url" placeholder="OR Paste Image URL here" style="margin-top:4px;"></div><div class="modal-actions"><button class="btn-cancel" onclick="closeAnnouncementModal()">Cancel</button><button class="btn-save" onclick="saveAnnouncement()">Publish</button></div></div></div>
-<div class="add-modal-overlay" id="event-modal"><div class="add-modal"><div class="add-modal-title"><i data-lucide="calendar"></i> Add Event</div><div class="modal-grid"><input id="event-title" placeholder="Title"><input type="date" id="event-date"><input id="event-time" placeholder="Time"><select id="event-type"><option value="meeting">Meeting</option><option value="social">Social</option><option value="patrol">Patrol</option></select><textarea id="event-desc" rows="2" placeholder="Description"></textarea><div style="font-size:12px; font-weight:bold; margin-top:8px;">Event Cover (Hybrid)</div><input type="file" id="event-file" accept="image/*" style="font-size:12px; padding:4px;"><input id="event-img-url" placeholder="OR Paste Image URL here" style="margin-top:4px;"></div><div class="modal-actions"><button class="btn-cancel" onclick="closeEventModal()">Cancel</button><button class="btn-save" onclick="saveEvent()">Save</button></div></div></div>
+<div class="add-modal-overlay" id="event-modal"><div class="add-modal"><div class="add-modal-title"><i data-lucide="calendar"></i> Event</div><div class="modal-grid"><input type="hidden" id="event-id"><input id="event-title" placeholder="Title"><input type="date" id="event-date"><input id="event-time" placeholder="Time"><select id="event-type"><option value="meeting">Meeting</option><option value="social">Social</option><option value="patrol">Patrol</option></select><textarea id="event-desc" rows="2" placeholder="Description"></textarea><div style="font-size:12px; font-weight:bold; margin-top:8px;">Event Cover (Hybrid)</div><input type="file" id="event-file" accept="image/*" style="font-size:12px; padding:4px;"><input id="event-img-url" placeholder="OR Paste Image URL here" style="margin-top:4px;"></div><div class="modal-actions"><button class="btn-cancel" onclick="closeEventModal()">Cancel</button><button class="btn-save" onclick="saveEvent()">Save</button></div></div></div>
 <div class="add-modal-overlay" id="poll-modal"><div class="add-modal"><div class="add-modal-title"><i data-lucide="vote"></i> Create Poll</div><div class="modal-grid"><input id="poll-question" placeholder="Question"><input id="poll-options" placeholder="Option1, Option2, Option3"></div><div class="modal-actions"><button class="btn-cancel" onclick="closePollModal()">Cancel</button><button class="btn-save" onclick="savePoll()">Publish</button></div></div></div>
 <div class="add-modal-overlay" id="board-member-modal"><div class="add-modal"><div class="add-modal-title"><i data-lucide="users"></i> Board Member</div><div class="modal-grid"><input type="hidden" id="board-id"><input id="board-name" placeholder="Name"><input id="board-position" placeholder="Position"><input id="board-phone" placeholder="Phone"><input type="number" id="board-order" placeholder="Order"></div><div class="modal-actions"><button class="btn-cancel" onclick="closeBoardMemberModal()">Cancel</button><button class="btn-save" onclick="saveBoardMember()">Save</button></div></div></div>
 <div class="add-modal-overlay" id="gallery-modal"><div class="add-modal"><div class="add-modal-title"><i data-lucide="camera"></i> Add Album</div><div class="modal-grid"><input type="hidden" id="gallery-id"><input id="gallery-name" placeholder="Album Name"><input type="date" id="gallery-date"><textarea id="gallery-desc" rows="2" placeholder="Description"></textarea><input id="gallery-link" placeholder="Google Photos Link"><input id="gallery-cover" placeholder="Cover Image URL (optional)"></div><div class="modal-actions"><button class="btn-cancel" onclick="closeGalleryModal()">Cancel</button><button class="btn-save" onclick="saveGallery()">Save</button></div></div></div>
@@ -1544,8 +1544,61 @@ async function saveAnnouncement() { const title = document.getElementById('annou
 async function deleteAnnouncement(id) { if(!confirm('Delete?')) return; const a = allAnnouncements.find(x => x.id === id); if (a && a.image_url && a.image_url.includes('supabase.co')) { try { const parts = a.image_url.split('/public_images/'); if (parts.length > 1) { await supabase.storage.from('public_images').remove([parts[1]]); } } catch(e) { console.log('Failed to delete image', e); } } await supabase.from('announcements').delete().eq('id', id); showToast('Deleted'); await renderAnnouncements(); }
 
 // Events
-async function renderEvents() { await loadEvents(); document.getElementById('events-table-body').innerHTML = allEvents.map(e => `<tr><td>${formatDate(e.event_date)}</td><td>${escapeHtml(e.title)}</td><td><span class="status-pill ${e.category==='patrol'?'partial':'paid'}">${e.category || ''}</span></td><td><button class="icon-btn danger" onclick="deleteEvent(${e.id})"><i data-lucide="trash-2"></i></button></td></tr>`).join(''); }
-async function saveEvent() { const title = document.getElementById('event-title')?.value, date = document.getElementById('event-date')?.value, time = document.getElementById('event-time')?.value, type = document.getElementById('event-type')?.value, desc = document.getElementById('event-desc')?.value; let imgUrl = document.getElementById('event-img-url')?.value; const fileInput = document.getElementById('event-file'); if(!title || !date) { showToast('Title and date required'); return; } if (fileInput && fileInput.files && fileInput.files[0]) { try { showToast('Compressing image...'); const dataUrl = await compressImage(fileInput.files[0], 200); showToast('Uploading image...'); const uploadedUrl = await uploadImageToSupabase(dataUrl, 'public_images'); if (uploadedUrl) imgUrl = uploadedUrl; } catch(e) { showToast('Image upload failed, using text only.'); } } const { error } = await supabase.from('events').insert([{ community_id:currentCommunityId, title, event_date:date, event_time:time, category:type, description:desc, image_url: imgUrl || null }]); if(error) { showToast('Failed to save event: ' + error.message); console.error(error); return; } showToast('Event saved'); closeEventModal(); await renderEvents(); await loadPublicEvents(); }
+async function renderEvents() { await loadEvents(); document.getElementById('events-table-body').innerHTML = allEvents.map(e => `<tr><td>${formatDate(e.event_date)}</td><td>${escapeHtml(e.title)}</td><td><span class="status-pill ${e.category==='patrol'?'partial':'paid'}">${e.category || ''}</span></td><td><button class="icon-btn" onclick="openEditEvent(${e.id})"><i data-lucide="edit-2"></i></button> <button class="icon-btn danger" onclick="deleteEvent(${e.id})"><i data-lucide="trash-2"></i></button></td></tr>`).join(''); setTimeout(()=>lucide.createIcons(),50); }
+async function saveEvent() {
+  const id = document.getElementById('event-id')?.value;
+  const title = document.getElementById('event-title')?.value,
+        date = document.getElementById('event-date')?.value,
+        time = document.getElementById('event-time')?.value,
+        type = document.getElementById('event-type')?.value,
+        desc = document.getElementById('event-desc')?.value;
+  let imgUrl = document.getElementById('event-img-url')?.value;
+  const fileInput = document.getElementById('event-file');
+  if(!title || !date) { showToast('Title and date required'); return; }
+  if (fileInput && fileInput.files && fileInput.files[0]) {
+    try {
+      showToast('Compressing image...');
+      const dataUrl = await compressImage(fileInput.files[0], 200);
+      showToast('Uploading image...');
+      const uploadedUrl = await uploadImageToSupabase(dataUrl, 'public_images');
+      if (uploadedUrl) imgUrl = uploadedUrl;
+    } catch(e) {
+      showToast('Image upload failed, using text only.');
+    }
+  }
+  
+  let res;
+  if(id) {
+    res = await supabase.from('events').update({
+      title,
+      event_date: date,
+      event_time: time,
+      category: type,
+      description: desc,
+      image_url: imgUrl || null
+    }).eq('id', id);
+  } else {
+    res = await supabase.from('events').insert([{
+      community_id: currentCommunityId,
+      title,
+      event_date: date,
+      event_time: time,
+      category: type,
+      description: desc,
+      image_url: imgUrl || null
+    }]);
+  }
+  
+  if(res.error) {
+    showToast('Failed to save event: ' + res.error.message);
+    console.error(res.error);
+    return;
+  }
+  showToast('Event saved');
+  closeEventModal();
+  await renderEvents();
+  await loadPublicEvents();
+}
 async function deleteEvent(id) { if(!confirm('Delete?')) return; const e = allEvents.find(x => x.id === id); if (e && e.image_url && e.image_url.includes('supabase.co')) { try { const parts = e.image_url.split('/public_images/'); if (parts.length > 1) { await supabase.storage.from('public_images').remove([parts[1]]); } } catch(err) { console.log('Failed to delete image', err); } } await supabase.from('events').delete().eq('id', id); showToast('Deleted'); await renderEvents(); await loadPublicEvents(); }
 async function loadPublicEvents() { const {data} = await supabase.from('events').select('*').eq('community_id', currentCommunityId).gte('event_date', new Date().toISOString().split('T')[0]).order('event_date').limit(3); document.getElementById('pub-events-list').innerHTML = (data||[]).map((e,i) => { const eventImg = e.image_url || (i%2===0 ? 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=400&q=80' : 'https://images.unsplash.com/photo-1528605248644-14dd04022da1?auto=format&fit=crop&w=400&q=80'); return `<div class="event-slide-card" style="min-width:240px; background:var(--surface); border-radius:24px; overflow:hidden; border:1px solid var(--border); box-shadow:0 4px 10px rgba(0,0,0,0.03);"><div style="padding:16px; display:flex; gap:16px;"><div style="text-align:center;"><div style="font-size:10px; font-weight:800; color:var(--primary); text-transform:uppercase;">${new Date(e.event_date).toLocaleDateString('en-US',{month:'short'})}</div><div style="font-size:24px; font-weight:800; color:var(--text); line-height:1;">${new Date(e.event_date).getDate()}</div></div><div><div style="font-weight:800; font-size:15px; margin-bottom:4px; color:var(--text);">${escapeHtml(e.title)}</div><div style="font-size:11px; color:var(--text-light);">${e.event_time||'TBA'}</div></div></div><div style="height:120px; background:url('${eventImg}') center/cover;"></div></div>`; }).join('') || '<div>No upcoming events</div>'; setTimeout(()=>lucide.createIcons(),50); }
 
@@ -1659,7 +1712,32 @@ function closeAssetRequestModal() { document.getElementById('asset-request-modal
 function openAddMemberModal() { document.getElementById('add-member-modal').classList.add('open'); }
 function openAddBoardMemberModal() { document.getElementById('board-id').value = ''; document.getElementById('board-name').value = ''; document.getElementById('board-position').value = ''; document.getElementById('board-phone').value = ''; document.getElementById('board-order').value = ''; document.getElementById('board-member-modal').classList.add('open'); }
 function openCreateAnnouncementModal() { document.getElementById('announcement-modal').classList.add('open'); }
-function openAddEventModal() { document.getElementById('event-date').value = new Date().toISOString().split('T')[0]; document.getElementById('event-modal').classList.add('open'); }
+function openAddEventModal() {
+  document.getElementById('event-id').value = '';
+  document.getElementById('event-title').value = '';
+  document.getElementById('event-date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('event-time').value = '';
+  document.getElementById('event-type').value = 'meeting';
+  document.getElementById('event-desc').value = '';
+  document.getElementById('event-img-url').value = '';
+  const fileInput = document.getElementById('event-file');
+  if(fileInput) fileInput.value = '';
+  document.getElementById('event-modal').classList.add('open');
+}
+function openEditEvent(id) {
+  const e = allEvents.find(x => x.id === id);
+  if(!e) return;
+  document.getElementById('event-id').value = e.id;
+  document.getElementById('event-title').value = e.title;
+  document.getElementById('event-date').value = e.event_date;
+  document.getElementById('event-time').value = e.event_time || '';
+  document.getElementById('event-type').value = e.category || 'meeting';
+  document.getElementById('event-desc').value = e.description || '';
+  document.getElementById('event-img-url').value = e.image_url || '';
+  const fileInput = document.getElementById('event-file');
+  if(fileInput) fileInput.value = '';
+  document.getElementById('event-modal').classList.add('open');
+}
 function openCreatePollModal() { document.getElementById('poll-modal').classList.add('open'); }
 function openAddTransactionModal() { document.getElementById('transaction-date').value = new Date().toISOString().split('T')[0]; document.getElementById('transaction-modal').classList.add('open'); }
 function openAddGalleryModal() { document.getElementById('gallery-id').value = ''; document.getElementById('gallery-name').value = ''; document.getElementById('gallery-date').value = new Date().toISOString().split('T')[0]; document.getElementById('gallery-desc').value = ''; document.getElementById('gallery-link').value = ''; document.getElementById('gallery-cover').value = ''; document.getElementById('gallery-modal').classList.add('open'); }
