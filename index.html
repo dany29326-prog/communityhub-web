@@ -1418,12 +1418,36 @@ async function loadMembers() { const {data} = await supabase.from('members').sel
 async function loadDues() { const {data} = await supabase.from('membership_dues').select('*').eq('community_id', currentCommunityId); allDues = data || []; return data; }
 async function loadTreasury() { const {data} = await supabase.from('treasury').select('*').eq('community_id', currentCommunityId).order('transaction_date', {ascending:false}); allTreasury = data || []; return data; }
 async function loadAnnouncements() { const {data} = await supabase.from('announcements').select('*').eq('community_id', currentCommunityId).order('created_at', {ascending:false}); allAnnouncements = data || []; return data; }
-async function loadServiceRequests() { const {data} = await supabase.from('service_requests').select('*, members(*)').eq('community_id', currentCommunityId).order('created_at', {ascending:false}); allServiceRequests = data || []; return data; }
+async function loadServiceRequests() { const {data} = await supabase.from('service_requests').select('*').eq('community_id', currentCommunityId).order('created_at', {ascending:false}); allServiceRequests = data || []; return data; }
 async function loadEvents() { const {data} = await supabase.from('events').select('*').eq('community_id', currentCommunityId).order('event_date', {ascending:true}); allEvents = data || []; return data; }
 async function loadPolls() { const {data:p} = await supabase.from('polls').select('*').eq('community_id', currentCommunityId).order('created_at', {ascending:false}); const {data:v} = await supabase.from('poll_votes').select('*').eq('community_id', currentCommunityId); allPolls = p || []; allVotes = v || []; }
-async function loadBoardMembers() { const {data} = await supabase.from('board_members').select('*, members(*)').eq('community_id', currentCommunityId).order('display_order'); allBoardMembers = (data || []).map(b => ({ ...b, full_name: b.members?.full_name || '', phone: b.members?.phone || '' })); return data; }
+async function loadBoardMembers() {
+  await loadMembers();
+  const {data} = await supabase.from('board_members').select('*').eq('community_id', currentCommunityId).order('display_order');
+  allBoardMembers = (data || []).map(b => {
+    const m = allMembers.find(member => member.id === b.member_id);
+    return {
+      ...b,
+      full_name: m ? m.full_name : '',
+      phone: m ? m.phone : ''
+    };
+  });
+  return data;
+}
 async function loadAssets() { const {data} = await supabase.from('community_assets').select('*').eq('community_id', currentCommunityId).order('asset_name'); allAssets = data || []; return data; }
-async function loadLoans() { const {data, error} = await supabase.from('asset_loans').select('*, members(*), community_assets!inner(*)').eq('community_assets.community_id', currentCommunityId).order('created_at', {ascending:false}); if(error) console.error(error); allLoans = (data || []).map(l => ({ ...l, borrower_name: l.members?.full_name || 'Anonymous' })); return data; }
+async function loadLoans() {
+  const {data, error} = await supabase.from('asset_loans').select('*, community_assets!inner(*)').eq('community_assets.community_id', currentCommunityId).order('created_at', {ascending:false});
+  if(error) console.error(error);
+  await loadMembers();
+  allLoans = (data || []).map(l => {
+    const m = allMembers.find(member => member.id === l.member_id);
+    return {
+      ...l,
+      borrower_name: m ? m.full_name : 'Anonymous'
+    };
+  });
+  return data;
+}
 async function loadGallery() { const {data} = await supabase.from('communities').select('settings').eq('id', currentCommunityId).single(); try { allGallery = data?.settings?.gallery_albums ? JSON.parse(data.settings.gallery_albums) : []; } catch(e) { allGallery = []; } }
 async function loadSettings() { const {data} = await supabase.from('communities').select('settings').eq('id', currentCommunityId).single(); appSettings = data?.settings || {}; }
 
