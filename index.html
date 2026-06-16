@@ -1308,8 +1308,8 @@ input:checked + .toggle-slider:before { transform: translateX(20px); }
       <div class="pub-page" id="pub-announcements"><div class="container"><button class="back-to-home-btn" onclick="showPubPage('home')">← Back</button><div class="section-title"><i data-lucide="megaphone"></i> All Announcements</div><div id="pub-announce-all">Loading...</div></div></div>
       <div class="pub-page" id="pub-check-dues"><div class="container"><button class="back-to-home-btn" onclick="showPubPage('home')">← Back</button><div class="section-title"><i data-lucide="wallet"></i> Payments</div><div class="check-dues-box"><input class="form-input" id="check-name" placeholder="Enter your full name"><button class="btn-check" onclick="checkDues()"><i data-lucide="search"></i> Check Now</button><div class="dues-result" id="dues-result" style="display:none;"><div id="dues-result-name"></div><div class="dues-month-grid" id="dues-month-grid"></div><div id="dues-status-text"></div></div></div></div></div>
       <div class="pub-page" id="pub-requests"><div class="container"><button class="back-to-home-btn" onclick="showPubPage('home')">← Back</button><div class="section-title"><i data-lucide="clipboard-list"></i> Service Request</div><div class="request-grid" id="request-types-grid"></div><div class="request-form" style="background:#fff; border-radius:16px; padding:20px;"><div><i data-lucide="file-edit"></i> Form — <span id="request-type-label">Maintenance Request</span></div><div class="form-row" style="display:grid; grid-template-columns:1fr; gap:12px; margin:16px 0;"><input class="form-input" id="request-name" placeholder="Full Name"><input class="form-input" id="request-unit" placeholder="Unit Number"><input class="form-input" id="request-phone" placeholder="Phone Number"><input class="form-input" id="request-subject" placeholder="Subject / Purpose"></div><button class="btn-check" onclick="submitServiceRequest()"><i data-lucide="mail"></i> Submit Request</button></div></div></div>
-      <div class="pub-page" id="pub-board"><div class="container"><button class="back-to-home-btn" onclick="showPubPage('home')">← Back</button><div class="section-title"><i data-lucide="crown"></i> Board of Directors</div><div class="pub-segmented-control"><button class="pub-segmented-button" onclick="showPubPage('members')"><i data-lucide="users"></i> Warga</button><button class="pub-segmented-button active" onclick="showPubPage('board')"><i data-lucide="crown"></i> Pengurus</button></div><div id="public-board-list" class="member-grid">Loading...</div></div></div>
-      <div class="pub-page" id="pub-members"><div class="container"><button class="back-to-home-btn" onclick="showPubPage('home')">← Back</button><div class="section-title"><i data-lucide="users"></i> Member Directory</div><div class="pub-segmented-control"><button class="pub-segmented-button active" onclick="showPubPage('members')"><i data-lucide="users"></i> Warga</button><button class="pub-segmented-button" onclick="showPubPage('board')"><i data-lucide="crown"></i> Pengurus</button></div><div class="filter-bar" style="margin-bottom:16px;"><input class="form-input" id="search-pub-members" placeholder="Search members..." onkeyup="filterPubMembers()"></div><div id="public-members-list" class="member-grid">Loading...</div></div></div>
+      <div class="pub-page" id="pub-board"><div class="container"><button class="back-to-home-btn" onclick="showPubPage('home')">← Back</button><div class="section-title"><i data-lucide="crown"></i> Board of Directors</div><div class="pub-segmented-control"><button class="pub-segmented-button" onclick="showPubPage('members')"><i data-lucide="users"></i> Members</button><button class="pub-segmented-button active" onclick="showPubPage('board')"><i data-lucide="crown"></i> Board</button></div><div id="public-board-list" class="member-grid">Loading...</div></div></div>
+      <div class="pub-page" id="pub-members"><div class="container"><button class="back-to-home-btn" onclick="showPubPage('home')">← Back</button><div class="section-title"><i data-lucide="users"></i> Member Directory</div><div class="pub-segmented-control"><button class="pub-segmented-button active" onclick="showPubPage('members')"><i data-lucide="users"></i> Members</button><button class="pub-segmented-button" onclick="showPubPage('board')"><i data-lucide="crown"></i> Board</button></div><div class="filter-bar" style="margin-bottom:16px;"><input class="form-input" id="search-pub-members" placeholder="Search members..." onkeyup="filterPubMembers()"></div><div id="public-members-list" class="member-grid">Loading...</div></div></div>
       <div class="pub-page" id="pub-polls"><div class="container"><button class="back-to-home-btn" onclick="showPubPage('home')">← Back</button><div class="section-title"><i data-lucide="vote"></i> Community Voting</div><div id="public-polling-container">Loading...</div></div></div>
       <div class="pub-page" id="pub-gallery"><div class="container"><button class="back-to-home-btn" onclick="showPubPage('home')">← Back</button><div class="section-title"><i data-lucide="camera"></i> Event Gallery</div><div id="public-album-grid" class="album-grid">Loading...</div></div></div>
       <div class="pub-page" id="pub-assets"><div class="container"><button class="back-to-home-btn" onclick="showPubPage('home')">← Back</button><div class="section-title"><i data-lucide="box"></i> Community Assets</div><div style="display:flex; justify-content:flex-end; margin-bottom:16px;"><button class="btn-check" style="width:auto; padding:8px 16px;" onclick="openAssetRequestModal()"><i data-lucide="clipboard-list"></i> Request Asset</button></div><div id="public-assets-grid" class="assets-grid">Loading...</div></div></div>
@@ -1370,13 +1370,13 @@ input:checked + .toggle-slider:before { transform: translateX(20px); }
 
 <!-- MODALS -->
   <!-- RESIDENT MODALS -->
-  <div class="add-modal-overlay" id="personal-info-modal"><div class="add-modal"><div class="add-modal-title"><i data-lucide="user"></i> Personal Information</div><div style="display:flex; flex-direction:column; align-items:center; gap:8px; margin-bottom:12px;"><div id="resident-avatar-preview" style="width:70px; height:70px; border-radius:50%; background:var(--gold); display:flex; align-items:center; justify-content:center; font-size:24px; font-weight:800; color:var(--navy); border:2px solid rgba(255,255,255,0.2); position:relative; cursor:pointer; overflow:hidden;" onclick="document.getElementById('resident-avatar-file').click()">S</div><div style="display:flex; gap:8px;"><button class="btn-cancel" style="padding:4px 8px; font-size:11px; height:auto; border-radius:6px;" onclick="document.getElementById('resident-avatar-file').click()">Pilih Foto</button><button id="resident-avatar-delete-btn" class="btn-cancel" style="padding:4px 8px; font-size:11px; height:auto; border-radius:6px; color:#ef4444; border-color:rgba(239,68,68,0.2); display:none;" onclick="deleteResidentAvatar()">Hapus Foto</button></div><input type="file" id="resident-avatar-file" accept="image/*" style="display:none;" onchange="handleResidentAvatarChange(event)"></div><div class="modal-grid" style="gap:12px;"><label style="font-size:11px; font-weight:800; color:var(--text-light); text-transform:uppercase; margin-bottom:-4px;">Nama Lengkap</label><input id="resident-name-input" class="form-input" placeholder="Nama Lengkap"><label style="font-size:11px; font-weight:800; color:var(--text-light); text-transform:uppercase; margin-bottom:-4px;">Nomor Unit</label><input id="resident-unit-input" class="form-input" placeholder="Nomor Unit (misal: 12B)"><label style="font-size:11px; font-weight:800; color:var(--text-light); text-transform:uppercase; margin-bottom:-4px;">Nomor HP</label><input id="resident-phone-input" class="form-input" placeholder="Nomor HP"></div><div class="modal-actions" style="margin-top:20px; display:flex; flex-direction:column; gap:8px;"><div style="display:flex; gap:8px; width:100%;"><button class="btn-cancel" style="flex:1;" onclick="closePersonalInfoModal()">Cancel</button><button class="btn-save" style="flex:1;" onclick="saveResidentProfileLocal()">Simpan Lokal</button></div><button class="btn-save" style="width:100%; background:#059669;" onclick="verifyResidentAccount()"><i data-lucide="shield-check"></i> Hubungkan & Verifikasi</button><button class="btn-cancel" style="width:100%; color:#ef4444; border-color:#ef4444; display:none;" id="unlink-resident-btn" onclick="unlinkResidentAccount()">Putuskan Hubungan</button></div></div></div>
+  <div class="add-modal-overlay" id="personal-info-modal"><div class="add-modal"><div class="add-modal-title"><i data-lucide="user"></i> Personal Information</div><div style="display:flex; flex-direction:column; align-items:center; gap:8px; margin-bottom:12px;"><div id="resident-avatar-preview" style="width:70px; height:70px; border-radius:50%; background:var(--gold); display:flex; align-items:center; justify-content:center; font-size:24px; font-weight:800; color:var(--navy); border:2px solid rgba(255,255,255,0.2); position:relative; cursor:pointer; overflow:hidden;" onclick="document.getElementById('resident-avatar-file').click()">S</div><div style="display:flex; gap:8px;"><button class="btn-cancel" style="padding:4px 8px; font-size:11px; height:auto; border-radius:6px;" onclick="document.getElementById('resident-avatar-file').click()">Choose Photo</button><button id="resident-avatar-delete-btn" class="btn-cancel" style="padding:4px 8px; font-size:11px; height:auto; border-radius:6px; color:#ef4444; border-color:rgba(239,68,68,0.2); display:none;" onclick="deleteResidentAvatar()">Delete Photo</button></div><input type="file" id="resident-avatar-file" accept="image/*" style="display:none;" onchange="handleResidentAvatarChange(event)"></div><div class="modal-grid" style="gap:12px;"><label style="font-size:11px; font-weight:800; color:var(--text-light); text-transform:uppercase; margin-bottom:-4px;">Full Name</label><input id="resident-name-input" class="form-input" placeholder="Full Name"><label style="font-size:11px; font-weight:800; color:var(--text-light); text-transform:uppercase; margin-bottom:-4px;">Unit Number</label><input id="resident-unit-input" class="form-input" placeholder="Unit Number (e.g. 12B)"><label style="font-size:11px; font-weight:800; color:var(--text-light); text-transform:uppercase; margin-bottom:-4px;">Phone Number</label><input id="resident-phone-input" class="form-input" placeholder="Phone Number"></div><div class="modal-actions" style="margin-top:20px; display:flex; flex-direction:column; gap:8px;"><div style="display:flex; gap:8px; width:100%;"><button class="btn-cancel" style="flex:1;" onclick="closePersonalInfoModal()">Cancel</button><button class="btn-save" style="flex:1;" onclick="saveResidentProfileLocal()">Save Locally</button></div><button class="btn-save" style="width:100%; background:#059669;" onclick="verifyResidentAccount()"><i data-lucide="shield-check"></i> Link & Verify</button><button class="btn-cancel" style="width:100%; color:#ef4444; border-color:#ef4444; display:none;" id="unlink-resident-btn" onclick="unlinkResidentAccount()">Unlink Account</button></div></div></div>
 
-  <div class="add-modal-overlay" id="login-security-modal"><div class="add-modal"><div class="add-modal-title"><i data-lucide="lock"></i> Login & Security</div><div class="modal-grid" style="gap:12px;"><div style="background:var(--surface2); padding:12px; border-radius:12px; font-size:13px; line-height:1.4; color:var(--text);"><div style="margin-bottom:4px;"><strong>Status Akun:</strong> <span id="security-status-text">-</span></div><div><strong>PIN Keamanan:</strong> <span id="security-pin-status">Belum Aktif</span></div></div><label style="font-size:11px; font-weight:800; color:var(--text-light); text-transform:uppercase; margin-bottom:-4px;">Atur 4-Digit PIN Baru</label><input type="password" id="security-pin-input" class="form-input" maxlength="4" placeholder="••••" style="text-align:center; letter-spacing:0.5em; font-size:18px;"></div><div class="modal-actions" style="margin-top:20px; display:flex; gap:8px;"><button class="btn-cancel" style="flex:1;" onclick="closeLoginSecurityModal()">Cancel</button><button class="btn-save" style="flex:1;" onclick="saveLocalSecurityPin()">Simpan PIN</button></div><div style="margin-top:12px; text-align:center;"><button class="btn-cancel" style="border:none; color:#ef4444; font-size:12px; background:none; cursor:pointer;" onclick="clearLocalSecurityPin()">Hapus PIN</button></div></div></div>
+  <div class="add-modal-overlay" id="login-security-modal"><div class="add-modal"><div class="add-modal-title"><i data-lucide="lock"></i> Login & Security</div><div class="modal-grid" style="gap:12px;"><div style="background:var(--surface2); padding:12px; border-radius:12px; font-size:13px; line-height:1.4; color:var(--text);"><div style="margin-bottom:4px;"><strong>Account Status:</strong> <span id="security-status-text">-</span></div><div><strong>Security PIN:</strong> <span id="security-pin-status">Inactive</span></div></div><label style="font-size:11px; font-weight:800; color:var(--text-light); text-transform:uppercase; margin-bottom:-4px;">Set 4-Digit Security PIN</label><input type="password" id="security-pin-input" class="form-input" maxlength="4" placeholder="••••" style="text-align:center; letter-spacing:0.5em; font-size:18px;"></div><div class="modal-actions" style="margin-top:20px; display:flex; gap:8px;"><button class="btn-cancel" style="flex:1;" onclick="closeLoginSecurityModal()">Cancel</button><button class="btn-save" style="flex:1;" onclick="saveLocalSecurityPin()">Save PIN</button></div><div style="margin-top:12px; text-align:center;"><button class="btn-cancel" style="border:none; color:#ef4444; font-size:12px; background:none; cursor:pointer;" onclick="clearLocalSecurityPin()">Delete PIN</button></div></div></div>
 
-  <div class="add-modal-overlay" id="payment-methods-modal"><div class="add-modal" style="max-height:85vh; overflow-y:auto;"><div class="add-modal-title"><i data-lucide="credit-card"></i> Payment Methods</div><div class="modal-grid" style="gap:12px;"><div style="background:var(--surface2); padding:16px; border-radius:16px;"><div style="font-size:10px; text-transform:uppercase; color:var(--text-light); font-weight:800; margin-bottom:4px; letter-spacing:0.05em;">Rekening Transfer Resmi</div><div style="font-size:14px; font-weight:700; color:var(--text); white-space:pre-line; line-height:1.4;" id="pub-payment-account-details">Loading...</div></div><div id="pub-resident-dues-status-card" style="display:none; background:var(--primary-pale); border:1px solid rgba(198,169,105,0.3); padding:16px; border-radius:16px;"><div style="font-size:10px; text-transform:uppercase; color:var(--text-light); font-weight:800; margin-bottom:4px; letter-spacing:0.05em;">Status Tagihan Anda</div><div style="font-size:16px; font-weight:800; color:var(--text);" id="pub-resident-dues-status-text">-</div><div style="margin-top:12px; font-size:11px; font-weight:800; color:var(--text-light); text-transform:uppercase; letter-spacing:0.05em;">Histori Transaksi Warga:</div><div id="pub-resident-payment-history" style="font-size:12px; margin-top:6px; max-height:150px; overflow-y:auto; line-height:1.6; color:var(--text-muted);">Loading history...</div></div></div><div class="modal-actions" style="margin-top:20px;"><button class="btn-save" style="width:100%;" onclick="closePaymentMethodsModal()">Tutup</button></div></div></div>
+  <div class="add-modal-overlay" id="payment-methods-modal"><div class="add-modal" style="max-height:85vh; overflow-y:auto;"><div class="add-modal-title"><i data-lucide="credit-card"></i> Payment Methods</div><div class="modal-grid" style="gap:12px;"><div style="background:var(--surface2); padding:16px; border-radius:16px;"><div style="font-size:10px; text-transform:uppercase; color:var(--text-light); font-weight:800; margin-bottom:4px; letter-spacing:0.05em;">Official Bank Coordinates</div><div style="font-size:14px; font-weight:700; color:var(--text); white-space:pre-line; line-height:1.4;" id="pub-payment-account-details">Loading...</div></div><div id="pub-resident-dues-status-card" style="display:none; background:var(--primary-pale); border:1px solid rgba(198,169,105,0.3); padding:16px; border-radius:16px;"><div style="font-size:10px; text-transform:uppercase; color:var(--text-light); font-weight:800; margin-bottom:4px; letter-spacing:0.05em;">Your Dues Status</div><div style="font-size:16px; font-weight:800; color:var(--text);" id="pub-resident-dues-status-text">-</div><div style="margin-top:12px; font-size:11px; font-weight:800; color:var(--text-light); text-transform:uppercase; letter-spacing:0.05em;">Payment History:</div><div id="pub-resident-payment-history" style="font-size:12px; margin-top:6px; max-height:150px; overflow-y:auto; line-height:1.6; color:var(--text-muted);">Loading history...</div></div></div><div class="modal-actions" style="margin-top:20px;"><button class="btn-save" style="width:100%;" onclick="closePaymentMethodsModal()">Close</button></div></div></div>
 
-  <div class="add-modal-overlay" id="pin-verification-modal"><div class="add-modal" style="max-width:320px;"><div class="add-modal-title" style="text-align:center;"><i data-lucide="lock"></i> PIN Keamanan</div><div style="text-align:center; margin:16px 0;"><input type="password" id="verification-pin-input" class="form-input" maxlength="4" placeholder="••••" style="text-align:center; letter-spacing:0.5em; font-size:24px; width:140px; border-bottom:2px solid var(--border); border-top:none; border-left:none; border-right:none; background:none; outline:none;"></div><div class="modal-actions" style="display:flex; gap:8px;"><button class="btn-cancel" style="flex:1;" onclick="cancelPinVerification()">Batal</button><button class="btn-save" style="flex:1;" onclick="submitPinVerification()">Konfirmasi</button></div></div></div>
+  <div class="add-modal-overlay" id="pin-verification-modal"><div class="add-modal" style="max-width:320px;"><div class="add-modal-title" style="text-align:center;"><i data-lucide="lock"></i> Security PIN</div><div style="text-align:center; margin:16px 0;"><input type="password" id="verification-pin-input" class="form-input" maxlength="4" placeholder="••••" style="text-align:center; letter-spacing:0.5em; font-size:24px; width:140px; border-bottom:2px solid var(--border); border-top:none; border-left:none; border-right:none; background:none; outline:none;"></div><div class="modal-actions" style="display:flex; gap:8px;"><button class="btn-cancel" style="flex:1;" onclick="cancelPinVerification()">Cancel</button><button class="btn-save" style="flex:1;" onclick="submitPinVerification()">Confirm</button></div></div></div>
 
 <div class="add-modal-overlay" id="add-member-modal"><div class="add-modal"><div class="add-modal-title"><i data-lucide="plus"></i> Add Member</div><div class="modal-grid"><input id="add-name" placeholder="Full Name"><input id="add-email" placeholder="Email"><input id="add-unit" placeholder="Unit"><input id="add-phone" placeholder="Phone"><input id="add-address" placeholder="Address"><input type="number" id="add-residents" placeholder="Residents" value="1"><select id="add-status"><option value="active">Active</option><option value="inactive">Inactive</option></select></div><div class="modal-actions"><button class="btn-cancel" onclick="closeAddMemberModal()">Cancel</button><button class="btn-save" onclick="saveNewMember()">Save</button></div></div></div>
 <div class="add-modal-overlay" id="payment-modal"><div class="add-modal"><div class="add-modal-title"><i data-lucide="wallet"></i> Record Payment</div><div class="modal-grid"><select id="payment-member"></select><input type="month" id="payment-month"><input type="number" id="payment-duration" value="1" min="1"><input type="number" id="payment-amount" placeholder="Amount"><div id="payment-total-info" style="background:var(--surface2); padding:12px; border-radius:12px; text-align:center; font-weight:800;">$0</div></div><div class="modal-actions"><button class="btn-cancel" onclick="closePaymentModal()">Cancel</button><button class="btn-save" onclick="savePayment()">Save</button></div></div></div>
@@ -2025,7 +2025,7 @@ function submitPinVerification() {
       action();
     }
   } else {
-    showToast('PIN salah!');
+    showToast('Incorrect PIN!');
     document.getElementById('verification-pin-input').value = '';
   }
 }
@@ -2035,7 +2035,7 @@ function cancelPinVerification() {
 }
 
 function deleteResidentAvatar() {
-  if (confirm('Hapus foto profil Anda?')) {
+  if (confirm('Delete your profile photo?')) {
     delete residentProfile.avatar_data_url;
     
     const previewEl = document.getElementById('resident-avatar-preview');
@@ -2050,7 +2050,7 @@ function deleteResidentAvatar() {
       localStorage.setItem('resident_profile', JSON.stringify(residentProfile));
       updateResidentUI();
     }
-    showToast('Foto profil dihapus');
+    showToast('Profile photo deleted');
   }
 }
 
@@ -2089,14 +2089,14 @@ function closePersonalInfoModal() {
 }
 function saveResidentProfileLocal() {
   if (residentProfile.is_verified) {
-    showToast('Akun terverifikasi tidak bisa diedit secara lokal.');
+    showToast('Verified accounts cannot be edited locally.');
     return;
   }
   const name = document.getElementById('resident-name-input').value.trim();
   const unit = document.getElementById('resident-unit-input').value.trim();
   const phone = document.getElementById('resident-phone-input').value.trim();
   if (!name || !unit) {
-    showToast('Nama Lengkap dan Unit wajib diisi');
+    showToast('Full Name and Unit Number are required.');
     return;
   }
   residentProfile = {
@@ -2110,20 +2110,20 @@ function saveResidentProfileLocal() {
   localStorage.setItem('resident_profile', JSON.stringify(residentProfile));
   updateResidentUI();
   closePersonalInfoModal();
-  showToast('Profil lokal berhasil disimpan!');
+  showToast('Local profile saved successfully!');
 }
 async function verifyResidentAccount() {
   if (residentProfile.is_verified) {
-    showToast('Akun Anda sudah terverifikasi.');
+    showToast('Your account is already verified.');
     return;
   }
   const name = document.getElementById('resident-name-input').value.trim();
   const phone = document.getElementById('resident-phone-input').value.trim();
   if (!name) {
-    showToast('Masukkan Nama Lengkap untuk verifikasi');
+    showToast('Please enter your Full Name for verification.');
     return;
   }
-  showToast('Memverifikasi data dengan server...');
+  showToast('Verifying account with database...');
   
   const { data, error } = await supabase
     .from('members')
@@ -2133,7 +2133,7 @@ async function verifyResidentAccount() {
     .limit(1);
 
   if (error) {
-    showToast('Koneksi gagal: ' + error.message);
+    showToast('Connection failed: ' + error.message);
     return;
   }
   if (data && data.length > 0) {
@@ -2149,27 +2149,27 @@ async function verifyResidentAccount() {
     localStorage.setItem('resident_profile', JSON.stringify(residentProfile));
     updateResidentUI();
     closePersonalInfoModal();
-    showToast('Verifikasi Berhasil! Akun Anda terhubung.');
+    showToast('Verification successful! Your account is now linked.');
   } else {
-    showToast('Nama tidak ditemukan di database warga.');
+    showToast('Name not found in the member directory.');
   }
 }
 function unlinkResidentAccount() {
-  if (confirm('Apakah Anda yakin ingin memutuskan hubungan akun warga terverifikasi ini?')) {
+  if (confirm('Are you sure you want to unlink this verified resident account?')) {
     residentProfile.is_verified = false;
     residentProfile.member_id = null;
     localStorage.setItem('resident_profile', JSON.stringify(residentProfile));
     updateResidentUI();
     closePersonalInfoModal();
-    showToast('Hubungan akun terputus.');
+    showToast('Account unlinked successfully.');
   }
 }
 
 // Login & Security Modal
 function openLoginSecurityModal() {
-  document.getElementById('security-status-text').textContent = residentProfile.is_verified ? 'Verified Resident (Terhubung Database)' : 'Guest / Unverified (Profil Lokal)';
+  document.getElementById('security-status-text').textContent = residentProfile.is_verified ? 'Verified Resident (Linked to DB)' : 'Guest / Unverified (Local Profile)';
   const pin = localStorage.getItem('resident_security_pin');
-  document.getElementById('security-pin-status').innerHTML = pin ? '<span style="color:#059669; font-weight:bold;">Aktif</span>' : 'Belum Aktif';
+  document.getElementById('security-pin-status').innerHTML = pin ? '<span style="color:#059669; font-weight:bold;">Active</span>' : 'Inactive';
   document.getElementById('security-pin-input').value = '';
   document.getElementById('login-security-modal').classList.add('open');
 }
@@ -2179,17 +2179,17 @@ function closeLoginSecurityModal() {
 function saveLocalSecurityPin() {
   const pin = document.getElementById('security-pin-input').value;
   if (!pin || pin.length !== 4 || isNaN(pin)) {
-    showToast('PIN harus berupa 4 digit angka');
+    showToast('PIN must be 4 digits.');
     return;
   }
   localStorage.setItem('resident_security_pin', pin);
-  showToast('PIN Pengaman lokal berhasil disimpan!');
+  showToast('Local security PIN saved successfully!');
   closeLoginSecurityModal();
 }
 function clearLocalSecurityPin() {
-  if (confirm('Hapus PIN Pengaman lokal?')) {
+  if (confirm('Delete local Security PIN?')) {
     localStorage.removeItem('resident_security_pin');
-    showToast('PIN Pengaman lokal telah dihapus');
+    showToast('Local Security PIN deleted');
     closeLoginSecurityModal();
   }
 }
@@ -2197,7 +2197,7 @@ function clearLocalSecurityPin() {
 // Payment Methods & Dues Info Modal
 function openPaymentMethodsModal() {
   verifyPinAccess(() => {
-    const bankDetails = appSettings.payment_account || 'Hubungi pengurus RT/Admin untuk instruksi transfer rekening.';
+    const bankDetails = appSettings.payment_account || 'Contact the board/admin for transfer instructions.';
     document.getElementById('pub-payment-account-details').textContent = bankDetails;
     
     const statusCard = document.getElementById('pub-resident-dues-status-card');
@@ -2206,28 +2206,28 @@ function openPaymentMethodsModal() {
     
     if (residentProfile.is_verified && residentProfile.member_id) {
       statusCard.style.display = 'block';
-      statusText.textContent = 'Memindai iuran...';
-      historyContainer.textContent = 'Memuat histori...';
+      statusText.textContent = 'Scanning dues...';
+      historyContainer.textContent = 'Loading history...';
       
       const currentMonthDues = allDues.find(d => d.member_id === residentProfile.member_id && d.due_month === currentMonth);
       if (currentMonthDues) {
         statusText.innerHTML = currentMonthDues.status === 'paid' 
-          ? `<span style="color:#059669;"><i data-lucide="check-circle" style="width:16px; margin-bottom:-3px;"></i> LUNAS (${formatCurrency(currentMonthDues.paid_amount)})</span>`
-          : `<span style="color:#ef4444;"><i data-lucide="alert-triangle" style="width:16px; margin-bottom:-3px;"></i> BELUM DIBAYAR (${formatCurrency(appSettings.monthly_dues_amount || 150)})</span>`;
+          ? `<span style="color:#059669;"><i data-lucide="check-circle" style="width:16px; margin-bottom:-3px;"></i> PAID (${formatCurrency(currentMonthDues.paid_amount)})</span>`
+          : `<span style="color:#ef4444;"><i data-lucide="alert-triangle" style="width:16px; margin-bottom:-3px;"></i> UNPAID (${formatCurrency(appSettings.monthly_dues_amount || 150)})</span>`;
       } else {
-        statusText.innerHTML = `<span style="color:#ef4444;"><i data-lucide="alert-triangle" style="width:16px; margin-bottom:-3px;"></i> BELUM DIBAYAR (${formatCurrency(appSettings.monthly_dues_amount || 150)})</span>`;
+        statusText.innerHTML = `<span style="color:#ef4444;"><i data-lucide="alert-triangle" style="width:16px; margin-bottom:-3px;"></i> UNPAID (${formatCurrency(appSettings.monthly_dues_amount || 150)})</span>`;
       }
       
       const userPayments = allDues.filter(d => d.member_id === residentProfile.member_id && d.status === 'paid');
       if (userPayments && userPayments.length > 0) {
         historyContainer.innerHTML = userPayments.map(p => `
           <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(0,0,0,0.05);">
-            <span>Iuran Bulan ${p.due_month}</span>
-            <span style="font-weight:bold; color:#059669;">Lunas (${formatCurrency(p.paid_amount)})</span>
+            <span>Dues for ${p.due_month}</span>
+            <span style="font-weight:bold; color:#059669;">Paid (${formatCurrency(p.paid_amount)})</span>
           </div>
         `).join('');
       } else {
-        historyContainer.textContent = 'Belum ada riwayat iuran tercatat.';
+        historyContainer.textContent = 'No recorded payments found.';
       }
       lucide.createIcons();
     } else {
