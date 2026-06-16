@@ -1095,7 +1095,7 @@ input:checked + .toggle-slider:before { transform: translateX(20px); }
       <nav class="pub-nav">
         <button class="pub-menu-btn" onclick="togglePublicSidebar()"><i data-lucide="menu"></i></button>
         <div class="pub-logo"><div class="pub-logo-icon"><i data-lucide="home"></i></div><div><div class="pub-logo-text">CommunityHub</div><div class="pub-logo-sub">The Hamilton Residence</div></div></div>
-        <div class="pub-topbar-search"><span class="search-icon"><i data-lucide="search"></i></span><input type="text" id="global-search" placeholder="Search..." autocomplete="off" onkeyup="searchPublicGlobal(this.value)"></div>
+        <div class="pub-topbar-search"><span class="search-icon"><i data-lucide="search"></i></span><input type="search" id="global-search" placeholder="Search..." autocomplete="off" onkeyup="searchPublicGlobal(this.value)"></div>
         <div class="pub-topbar-right"><span class="pub-topbar-date" id="pub-topbar-date"></span><button class="admin-login-btn" onclick="openLoginModal()"><i data-lucide="lock"></i> Admin</button></div>
       </nav>
 
@@ -1690,7 +1690,25 @@ function toggleQuickActionsSheet() { const overlay = document.getElementById('pu
 function handleSheetAction(action) { toggleQuickActionsSheet(); if(action === 'wa') openWhatsAppFab(); else showPubPage(action); }
 function openWhatsAppFab() { window.open('https://wa.me/15551234567', '_blank'); }
 function toggleAdminSidebar() { const sidebar = document.querySelector('.sidebar'); if(!sidebar) return; sidebar.classList.toggle('open'); let backdrop = document.getElementById('admin-sidebar-backdrop'); if(!backdrop && sidebar.classList.contains('open')) { backdrop = document.createElement('div'); backdrop.id = 'admin-sidebar-backdrop'; backdrop.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:400;'; backdrop.onclick = toggleAdminSidebar; document.getElementById('admin-shell').appendChild(backdrop); } if(backdrop) backdrop.style.display = sidebar.classList.contains('open') ? 'block' : 'none'; }
-function searchPublicGlobal(val) { const active = document.querySelector('.pub-page.active'); if(!active) return; if(active.id === 'pub-members') { document.getElementById('search-pub-members').value = val; filterPubMembers(); } else if(active.id === 'pub-announcements') renderAnnouncements(); else if(active.id === 'pub-assets') renderPublicAssets(); else showPubPage('members'); }
+function searchPublicGlobal(val) {
+  const searchInput = document.getElementById('global-search');
+  if (document.activeElement !== searchInput) return;
+  if (!val || val.trim() === '') return;
+  const active = document.querySelector('.pub-page.active');
+  if(!active) return;
+  if(active.id === 'pub-members') {
+    document.getElementById('search-pub-members').value = val;
+    filterPubMembers();
+  } else if(active.id === 'pub-announcements') {
+    renderAnnouncements();
+  } else if(active.id === 'pub-assets') {
+    renderPublicAssets();
+  } else {
+    showPubPage('members');
+    document.getElementById('search-pub-members').value = val;
+    filterPubMembers();
+  }
+}
 function exportMembersToCSV() { let csv = "Name,Email,Unit,Phone,Address,Residents,Status\n"; allMembers.forEach(m => csv += `"${m.full_name}","${m.email||''}","${m.unit_number||''}","${m.phone||''}","${m.address||''}",${m.residents_count||1},"${m.status}"\n`); const blob = new Blob([csv], {type:'text/csv'}); const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = 'members_export.csv'; link.click(); URL.revokeObjectURL(link.href); showToast('Export complete'); }
 function printDuesReport() { const printArea = document.getElementById('print-area'); const name = currentCommunityName || 'The Hamilton Residence'; printArea.innerHTML = `<div style="padding:20px;"><h2>Monthly Dues Report - ${name}</h2><p>Period: ${currentMonth}</p><table border="1" cellpadding="8" style="width:100%; border-collapse:collapse;"><tr><th>Member</th><th>Phone</th><th>Status</th><th>Amount</th></tr>${allMembers.map(m => { const payment = allDues.find(d => d.member_id === m.id && d.due_month === currentMonth); return `<tr><td>${escapeHtml(m.full_name)}</td><td>${m.phone||'-'}</td><td>${payment?.status||'unpaid'}</td><td>${formatCurrency(payment?.paid_amount||0)}</td></tr>`; }).join('')}</table></div>`; window.print(); }
 
