@@ -1151,7 +1151,7 @@ input:checked + .toggle-slider:before { transform: translateX(20px); }
         </div>
       </div>
       <div style="display:flex; align-items:center; gap:16px;">
-        <div style="position:relative;"><i data-lucide="bell"></i><span style="position:absolute; top:0; right:0; width:8px; height:8px; background:var(--warning); border-radius:50%; border:2px solid var(--navy);"></span></div>
+        <div style="position:relative; cursor:pointer;" onclick="openNotificationsModal()"><i data-lucide="bell"></i><span id="pub-bell-dot" style="position:absolute; top:0; right:0; width:8px; height:8px; background:var(--warning); border-radius:50%; border:2px solid var(--navy); display:none;"></span></div>
         <div id="pub-dash-avatar" style="width:36px; height:36px; border-radius:50%; background:var(--gold); display:flex; align-items:center; justify-content:center; color:var(--navy); font-weight:800; border:2px solid rgba(255,255,255,0.2);">S</div>
       </div>
     </div>
@@ -1377,6 +1377,26 @@ input:checked + .toggle-slider:before { transform: translateX(20px); }
   <div class="add-modal-overlay" id="payment-methods-modal"><div class="add-modal" style="max-height:85vh; overflow-y:auto;"><div class="add-modal-title"><i data-lucide="credit-card"></i> Payment Methods</div><div class="modal-grid" style="gap:12px;"><div style="background:var(--surface2); padding:16px; border-radius:16px;"><div style="font-size:10px; text-transform:uppercase; color:var(--text-light); font-weight:800; margin-bottom:4px; letter-spacing:0.05em;">Official Bank Coordinates</div><div style="font-size:14px; font-weight:700; color:var(--text); white-space:pre-line; line-height:1.4;" id="pub-payment-account-details">Loading...</div></div><div id="pub-resident-dues-status-card" style="display:none; background:var(--primary-pale); border:1px solid rgba(198,169,105,0.3); padding:16px; border-radius:16px;"><div style="font-size:10px; text-transform:uppercase; color:var(--text-light); font-weight:800; margin-bottom:4px; letter-spacing:0.05em;">Your Dues Status</div><div style="font-size:16px; font-weight:800; color:var(--text);" id="pub-resident-dues-status-text">-</div><div style="margin-top:12px; font-size:11px; font-weight:800; color:var(--text-light); text-transform:uppercase; letter-spacing:0.05em;">Payment History:</div><div id="pub-resident-payment-history" style="font-size:12px; margin-top:6px; max-height:150px; overflow-y:auto; line-height:1.6; color:var(--text-muted);">Loading history...</div></div></div><div class="modal-actions" style="margin-top:20px;"><button class="btn-save" style="width:100%;" onclick="closePaymentMethodsModal()">Close</button></div></div></div>
 
   <div class="add-modal-overlay" id="pin-verification-modal"><div class="add-modal" style="max-width:320px;"><div class="add-modal-title" style="text-align:center;"><i data-lucide="lock"></i> Security PIN</div><div style="text-align:center; margin:16px 0;"><input type="password" id="verification-pin-input" class="form-input" maxlength="4" placeholder="••••" style="text-align:center; letter-spacing:0.5em; font-size:24px; width:140px; border-bottom:2px solid var(--border); border-top:none; border-left:none; border-right:none; background:none; outline:none;"></div><div class="modal-actions" style="display:flex; gap:8px;"><button class="btn-cancel" style="flex:1;" onclick="cancelPinVerification()">Cancel</button><button class="btn-save" style="flex:1;" onclick="submitPinVerification()">Confirm</button></div></div></div>
+
+  <div class="add-modal-overlay" id="notifications-modal"><div class="add-modal" style="max-height:80vh; overflow-y:auto;"><div class="add-modal-title"><i data-lucide="bell"></i> Notifications</div><div class="modal-grid" style="gap:12px;"><div id="pub-notifications-empty" style="text-align:center; padding:30px 20px; color:var(--text-light); display:none;"><i data-lucide="bell-off" style="width:36px; height:36px; margin-bottom:8px; opacity:0.5; display:inline-block;"></i><div>No new notifications</div></div><div id="pub-notifications-list" style="display:flex; flex-direction:column; gap:10px;"></div></div><div class="modal-actions" style="margin-top:20px;"><button class="btn-save" style="width:100%;" onclick="closeNotificationsModal()">Close</button></div></div></div>
+
+  <div class="add-modal-overlay" id="pub-detail-modal">
+    <div class="add-modal" style="max-height:85vh; overflow-y:auto;">
+      <div class="add-modal-title" style="display: flex; align-items: center; gap: 8px;">
+        <i data-lucide="info"></i> Detail
+      </div>
+      <div id="pub-detail-img" style="height:180px; width:100%; border-radius:16px; background:center/cover; margin-bottom:16px; display:none;"></div>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <span id="pub-detail-category" class="status-pill paid" style="text-transform:uppercase; font-size:10px; font-weight:800; padding:2px 8px;">Info</span>
+        <span id="pub-detail-date" style="font-size:12px; color:var(--text-light); font-weight:500;">Date</span>
+      </div>
+      <h3 id="pub-detail-title" style="font-size:18px; font-weight:800; margin-bottom:12px; color:var(--text); line-height:1.4;">Title</h3>
+      <p id="pub-detail-content" style="font-size:14px; line-height:1.6; color:var(--text-muted); white-space:pre-wrap; margin-bottom:20px;">Content</p>
+      <div class="modal-actions">
+        <button class="btn-save" style="width:100%;" onclick="closePubDetailModal()">Close</button>
+      </div>
+    </div>
+  </div>
 
 <div class="add-modal-overlay" id="add-member-modal"><div class="add-modal"><div class="add-modal-title"><i data-lucide="plus"></i> Add Member</div><div class="modal-grid"><input id="add-name" placeholder="Full Name"><input id="add-email" placeholder="Email"><input id="add-unit" placeholder="Unit"><input id="add-phone" placeholder="Phone"><input id="add-address" placeholder="Address"><input type="number" id="add-residents" placeholder="Residents" value="1"><select id="add-status"><option value="active">Active</option><option value="inactive">Inactive</option></select></div><div class="modal-actions"><button class="btn-cancel" onclick="closeAddMemberModal()">Cancel</button><button class="btn-save" onclick="saveNewMember()">Save</button></div></div></div>
 <div class="add-modal-overlay" id="payment-modal"><div class="add-modal"><div class="add-modal-title"><i data-lucide="wallet"></i> Record Payment</div><div class="modal-grid"><select id="payment-member"></select><input type="month" id="payment-month"><input type="number" id="payment-duration" value="1" min="1"><input type="number" id="payment-amount" placeholder="Amount"><div id="payment-total-info" style="background:var(--surface2); padding:12px; border-radius:12px; text-align:center; font-weight:800;">$0</div></div><div class="modal-actions"><button class="btn-cancel" onclick="closePaymentModal()">Cancel</button><button class="btn-save" onclick="savePayment()">Save</button></div></div></div>
@@ -1825,7 +1845,7 @@ async function toggleNotifications(checkbox) {
 }
 
 // Public data load
-async function loadPublicData() { await Promise.all([loadMembers(), loadSettings(), loadAnnouncements(), loadEvents(), loadPolls(), loadBoardMembers(), loadTreasury(), loadServiceRequests(), loadGallery(), loadAssets()]); if (appSettings?.home_bg_image) { document.documentElement.style.setProperty('--pub-home-bg', `url('${appSettings.home_bg_image}')`); } renderPublicMembers(); renderPublicBoard(); renderPublicGallery(); renderPublicAssets(); renderAnnouncements(); loadPublicEvents(); loadPublicPolls(); document.getElementById('pub-stat-members').textContent = allMembers.length; const totalIncome = allTreasury.filter(t => t.type==='income').reduce((s,t)=>s+t.amount,0); const totalExpense = allTreasury.filter(t => t.type==='expense').reduce((s,t)=>s+t.amount,0); document.getElementById('pub-stat-treasury').innerHTML = formatCurrency(totalIncome - totalExpense); const tDateEl = document.getElementById('pub-stat-treasury-date'); if(tDateEl) tDateEl.textContent = `Balance as of ${new Date().toLocaleDateString('en-US',{month:'long',year:'numeric'})}`; const upcomingEvents = await supabase.from('events').select('id').gte('event_date', new Date().toISOString().split('T')[0]); document.getElementById('pub-stat-events').textContent = upcomingEvents.data?.length || 0; const pendingReqs = allServiceRequests.filter(r => r.status === 'pending'); document.getElementById('pub-stat-requests').textContent = pendingReqs.length; /* renderDuesChart removed */ await initVisitorCounter(); loadResidentProfile(); }
+async function loadPublicData() { await Promise.all([loadMembers(), loadSettings(), loadAnnouncements(), loadEvents(), loadPolls(), loadBoardMembers(), loadTreasury(), loadServiceRequests(), loadGallery(), loadAssets()]); if (appSettings?.home_bg_image) { document.documentElement.style.setProperty('--pub-home-bg', `url('${appSettings.home_bg_image}')`); } renderPublicMembers(); renderPublicBoard(); renderPublicGallery(); renderPublicAssets(); renderAnnouncements(); loadPublicEvents(); loadPublicPolls(); document.getElementById('pub-stat-members').textContent = allMembers.length; const totalIncome = allTreasury.filter(t => t.type==='income').reduce((s,t)=>s+t.amount,0); const totalExpense = allTreasury.filter(t => t.type==='expense').reduce((s,t)=>s+t.amount,0); document.getElementById('pub-stat-treasury').innerHTML = formatCurrency(totalIncome - totalExpense); const tDateEl = document.getElementById('pub-stat-treasury-date'); if(tDateEl) tDateEl.textContent = `Balance as of ${new Date().toLocaleDateString('en-US',{month:'long',year:'numeric'})}`; const upcomingEvents = await supabase.from('events').select('id').gte('event_date', new Date().toISOString().split('T')[0]); document.getElementById('pub-stat-events').textContent = upcomingEvents.data?.length || 0; const pendingReqs = allServiceRequests.filter(r => r.status === 'pending'); document.getElementById('pub-stat-requests').textContent = pendingReqs.length; /* renderDuesChart removed */ await initVisitorCounter(); loadResidentProfile(); checkUnreadNotifications(); }
 async function initVisitorCounter() { let stats = appSettings?.visitor_stats ? JSON.parse(appSettings.visitor_stats) : { total:0, daily:0, monthly:0 }; const today = new Date().toISOString().split('T')[0]; const thisMonth = new Date().toISOString().slice(0,7); if(!sessionStorage.getItem('communityhub_visited')) { sessionStorage.setItem('communityhub_visited','1'); stats.total = (stats.total||0)+1; if(stats.last_day === today) stats.daily = (stats.daily||0)+1; else { stats.daily = 1; stats.last_day = today; } if(stats.last_month === thisMonth) stats.monthly = (stats.monthly||0)+1; else { stats.monthly = 1; stats.last_month = thisMonth; } await supabase.from('communities').update({ settings: { ...appSettings, visitor_stats: JSON.stringify(stats) } }).eq('id', currentCommunityId); } document.querySelectorAll('.visit-daily').forEach(el => el.textContent = stats.daily||0); document.querySelectorAll('.visit-monthly').forEach(el => el.textContent = stats.monthly||0); document.querySelectorAll('.visit-total').forEach(el => el.textContent = stats.total||0); }
 
 // Navigation & UI helpers
@@ -2280,6 +2300,169 @@ function switchAssetsTab(tab) { currentAssetsTab = tab; document.getElementById(
 // Request type selector
 document.getElementById('request-types-grid') && (() => { const types = ['Maintenance Request','Service Request','Community Request','Facility Request','Other']; document.getElementById('request-types-grid').innerHTML = types.map(t => `<div class="request-card ${t==='Maintenance Request'?'selected':''}" onclick="selectRequestType(this,'${t}')"><div class="request-icon">${t==='Maintenance Request'?'<i data-lucide="wrench"></i>':(t==='Service Request'?'<i data-lucide="file-text"></i>':(t==='Community Request'?'<i data-lucide="home"></i>':(t==='Facility Request'?'<i data-lucide="building"></i>':'<i data-lucide="file-edit"></i>')))}</div><div class="request-name">${t}</div></div>`).join(''); })();
 function selectRequestType(el, name) { document.querySelectorAll('.request-card').forEach(c => c.classList.remove('selected')); el.classList.add('selected'); document.getElementById('request-type-label').innerText = name; }
+
+// Notifications UI logic
+function checkUnreadNotifications() {
+  const lastRead = localStorage.getItem('last_read_notifications');
+  const lastReadTime = lastRead ? new Date(lastRead).getTime() : 0;
+  
+  let hasUnread = false;
+  
+  for (const a of allAnnouncements) {
+    const aTime = new Date(a.created_at || 0).getTime();
+    if (aTime > lastReadTime) {
+      hasUnread = true;
+      break;
+    }
+  }
+  
+  if (!hasUnread) {
+    for (const e of allEvents) {
+      const eTime = new Date(e.created_at || e.event_date || 0).getTime();
+      if (eTime > lastReadTime) {
+        hasUnread = true;
+        break;
+      }
+    }
+  }
+  
+  const dot = document.getElementById('pub-bell-dot');
+  if (dot) {
+    dot.style.display = hasUnread ? 'block' : 'none';
+  }
+}
+
+function closeNotificationsModal() {
+  document.getElementById('notifications-modal').classList.remove('open');
+}
+
+function openNotificationsModal() {
+  localStorage.setItem('last_read_notifications', new Date().toISOString());
+  const dot = document.getElementById('pub-bell-dot');
+  if (dot) {
+    dot.style.display = 'none';
+  }
+  
+  const notifications = [];
+  allAnnouncements.forEach(a => {
+    notifications.push({
+      id: a.id,
+      type: 'announcement',
+      title: a.title,
+      body: a.content,
+      category: a.category,
+      date: a.created_at
+    });
+  });
+  allEvents.forEach(e => {
+    notifications.push({
+      id: e.id,
+      type: 'event',
+      title: e.title,
+      body: e.description || 'Upcoming community event.',
+      category: e.category || 'event',
+      date: e.created_at || e.event_date
+    });
+  });
+  
+  notifications.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+  
+  const listEl = document.getElementById('pub-notifications-list');
+  const emptyEl = document.getElementById('pub-notifications-empty');
+  
+  if (notifications.length === 0) {
+    listEl.innerHTML = '';
+    emptyEl.style.display = 'block';
+  } else {
+    emptyEl.style.display = 'none';
+    listEl.innerHTML = notifications.map(n => {
+      const iconHtml = n.type === 'announcement'
+        ? (n.category === 'urgent' ? '<i data-lucide="alert-circle"></i>' : (n.category === 'event' ? '<i data-lucide="party-popper"></i>' : '<i data-lucide="megaphone"></i>'))
+        : '<i data-lucide="calendar"></i>';
+        
+      const badgeClass = n.type === 'announcement'
+        ? (n.category === 'urgent' ? 'unpaid' : (n.category === 'event' ? 'partial' : 'paid'))
+        : 'partial';
+        
+      const typeLabel = n.type === 'announcement' ? (n.category || 'announcement') : 'event';
+      
+      const clickHandler = n.type === 'announcement'
+        ? `onclick="showAnnouncementDetail(${n.id}); closeNotificationsModal();"`
+        : `onclick="showEventDetail(${n.id}); closeNotificationsModal();"`;
+        
+      return `
+        <div class="feed-card" style="display:flex; align-items:center; padding:16px; background:var(--surface); border-radius:20px; border:1px solid var(--border); cursor:pointer; gap:12px;" ${clickHandler}>
+          <div style="width:40px; height:40px; border-radius:50%; background:var(--navy); display:flex; align-items:center; justify-content:center; color:var(--gold); flex-shrink:0;">
+            ${iconHtml}
+          </div>
+          <div style="flex:1;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:2px; gap:8px;">
+              <div style="font-weight:800; font-size:13px; color:var(--text); text-align:left;">${escapeHtml(n.title)}</div>
+              <span class="status-pill ${badgeClass}" style="font-size:9px; padding:2px 6px; text-transform:uppercase; flex-shrink:0;">${typeLabel}</span>
+            </div>
+            <div style="font-size:10px; color:var(--text-light); margin-bottom:4px; text-align:left;">${formatDate(n.date)}</div>
+            <div style="font-size:12px; color:var(--text-muted); line-height:1.4; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; text-align:left;">${escapeHtml(n.body)}</div>
+          </div>
+        </div>
+      `;
+    }).join('');
+    setTimeout(() => lucide.createIcons(), 50);
+  }
+  
+  document.getElementById('notifications-modal').classList.add('open');
+}
+
+function closePubDetailModal() {
+  document.getElementById('pub-detail-modal').classList.remove('open');
+}
+
+function showAnnouncementDetail(id) {
+  const a = allAnnouncements.find(x => x.id === id);
+  if (!a) return;
+  
+  const imgEl = document.getElementById('pub-detail-img');
+  if (a.image_url) {
+    imgEl.style.backgroundImage = `url('${a.image_url}')`;
+    imgEl.style.display = 'block';
+  } else {
+    imgEl.style.display = 'none';
+  }
+  
+  const catEl = document.getElementById('pub-detail-category');
+  catEl.textContent = a.category || 'Info';
+  catEl.className = 'status-pill ' + (a.category === 'urgent' ? 'unpaid' : (a.category === 'event' ? 'partial' : 'paid'));
+  
+  document.getElementById('pub-detail-date').textContent = formatDate(a.created_at);
+  document.getElementById('pub-detail-title').textContent = a.title;
+  document.getElementById('pub-detail-content').textContent = a.content;
+  
+  document.getElementById('pub-detail-modal').classList.add('open');
+}
+
+// Ensure the global feed click works for events as well if they exist
+function showEventDetail(id) {
+  const e = allEvents.find(x => x.id === id);
+  if (!e) return;
+  
+  const imgEl = document.getElementById('pub-detail-img');
+  if (e.image_url) {
+    imgEl.style.backgroundImage = `url('${e.image_url}')`;
+    imgEl.style.display = 'block';
+  } else {
+    imgEl.style.display = 'none';
+  }
+  
+  const catEl = document.getElementById('pub-detail-category');
+  catEl.textContent = e.category || 'Event';
+  catEl.className = 'status-pill partial';
+  
+  const eventDateStr = formatDate(e.event_date) + (e.event_time ? ` at ${e.event_time}` : '');
+  document.getElementById('pub-detail-date').textContent = eventDateStr;
+  document.getElementById('pub-detail-title').textContent = e.title;
+  document.getElementById('pub-detail-content').textContent = e.description || 'No description available.';
+  
+  document.getElementById('pub-detail-modal').classList.add('open');
+}
 
 // Initialize
 initTenant();
