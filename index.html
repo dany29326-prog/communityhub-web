@@ -1152,11 +1152,11 @@ input:checked + .toggle-slider:before { transform: translateX(20px); }
       </div>
       <div style="display:flex; align-items:center; gap:16px;">
         <div style="position:relative;"><i data-lucide="bell"></i><span style="position:absolute; top:0; right:0; width:8px; height:8px; background:var(--warning); border-radius:50%; border:2px solid var(--navy);"></span></div>
-        <div style="width:36px; height:36px; border-radius:50%; background:var(--gold); display:flex; align-items:center; justify-content:center; color:var(--navy); font-weight:800; border:2px solid rgba(255,255,255,0.2);">S</div>
+        <div id="pub-dash-avatar" style="width:36px; height:36px; border-radius:50%; background:var(--gold); display:flex; align-items:center; justify-content:center; color:var(--navy); font-weight:800; border:2px solid rgba(255,255,255,0.2);">S</div>
       </div>
     </div>
     <div style="font-size:14px; opacity:0.8; margin-bottom:4px;">Good Evening,</div>
-    <div style="font-size:28px; font-weight:800; margin-bottom:8px;">Sarah Johnson 👋</div>
+    <div id="pub-dash-name" style="font-size:28px; font-weight:800; margin-bottom:8px;">Sarah Johnson 👋</div>
     <div style="font-size:13px; opacity:0.7;">Welcome back to The Hamilton Residence</div>
   </div>
 
@@ -1247,12 +1247,12 @@ input:checked + .toggle-slider:before { transform: translateX(20px); }
         <div class="container" style="max-width:420px; padding:0;">
           <div class="pub-profile-header" style="background:var(--navy); color:#fff; padding:60px 24px 30px; border-radius:0 0 40px 40px; text-align:center; position:relative; overflow:hidden;">
             <div style="position:absolute; top:-50px; right:-50px; width:150px; height:150px; background:var(--gold); opacity:0.1; border-radius:50%;"></div>
-            <div style="width:90px; height:90px; border-radius:50%; background:var(--gold); display:inline-flex; align-items:center; justify-content:center; font-size:36px; font-weight:800; color:var(--navy); border:4px solid rgba(255,255,255,0.2); margin-bottom:16px; position:relative; z-index:2;">
+            <div id="pub-profile-avatar" style="width:90px; height:90px; border-radius:50%; background:var(--gold); display:inline-flex; align-items:center; justify-content:center; font-size:36px; font-weight:800; color:var(--navy); border:4px solid rgba(255,255,255,0.2); margin-bottom:16px; position:relative; z-index:2;">
               S
             </div>
-            <h2 style="margin:0; font-size:22px; position:relative; z-index:2;">Sarah Johnson</h2>
-            <div style="font-size:14px; opacity:0.8; margin-top:4px; position:relative; z-index:2;">Unit 12B • The Hamilton</div>
-            <div style="display:inline-block; background:rgba(198,169,105,0.2); color:var(--gold); padding:6px 16px; border-radius:20px; font-size:12px; font-weight:700; margin-top:20px; border:1px solid rgba(198,169,105,0.3); position:relative; z-index:2;">
+            <h2 id="pub-profile-name" style="margin:0; font-size:22px; position:relative; z-index:2;">Sarah Johnson</h2>
+            <div id="pub-profile-unit" style="font-size:14px; opacity:0.8; margin-top:4px; position:relative; z-index:2;">Unit 12B • The Hamilton</div>
+            <div id="pub-profile-badge" style="display:inline-block; background:rgba(198,169,105,0.2); color:var(--gold); padding:6px 16px; border-radius:20px; font-size:12px; font-weight:700; margin-top:20px; border:1px solid rgba(198,169,105,0.3); position:relative; z-index:2;">
                <i data-lucide="shield-check" style="width:14px; height:14px; margin-bottom:-2px;"></i> Verified Resident
             </div>
           </div>
@@ -1260,9 +1260,9 @@ input:checked + .toggle-slider:before { transform: translateX(20px); }
           <div style="padding:30px 20px 100px;">
             <h3 style="font-size:13px; color:var(--text-light); margin-bottom:12px; text-transform:uppercase; letter-spacing:0.05em; font-weight:800;">Account Settings</h3>
             <div class="pub-profile-card" style="background:#fff; border-radius:24px; border:1px solid var(--border); overflow:hidden; margin-bottom:30px; box-shadow:var(--shadow-premium);">
-              <div style="padding:18px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:16px; cursor:pointer;"><div style="background:var(--primary-pale); color:var(--gold); padding:10px; border-radius:12px;"><i data-lucide="user" style="width:20px; height:20px;"></i></div> <div style="flex:1; font-weight:700; font-size:15px;">Personal Information</div> <i data-lucide="chevron-right" style="color:var(--text-light); width:18px;"></i></div>
-              <div style="padding:18px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:16px; cursor:pointer;"><div style="background:var(--primary-pale); color:var(--gold); padding:10px; border-radius:12px;"><i data-lucide="lock" style="width:20px; height:20px;"></i></div> <div style="flex:1; font-weight:700; font-size:15px;">Login & Security</div> <i data-lucide="chevron-right" style="color:var(--text-light); width:18px;"></i></div>
-              <div style="padding:18px 20px; display:flex; align-items:center; gap:16px; cursor:pointer;"><div style="background:var(--primary-pale); color:var(--gold); padding:10px; border-radius:12px;"><i data-lucide="credit-card" style="width:20px; height:20px;"></i></div> <div style="flex:1; font-weight:700; font-size:15px;">Payment Methods</div> <i data-lucide="chevron-right" style="color:var(--text-light); width:18px;"></i></div>
+              <div style="padding:18px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:16px; cursor:pointer;" onclick="openPersonalInfoModal()"><div style="background:var(--primary-pale); color:var(--gold); padding:10px; border-radius:12px;"><i data-lucide="user" style="width:20px; height:20px;"></i></div> <div style="flex:1; font-weight:700; font-size:15px;">Personal Information</div> <i data-lucide="chevron-right" style="color:var(--text-light); width:18px;"></i></div>
+              <div style="padding:18px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:16px; cursor:pointer;" onclick="openLoginSecurityModal()"><div style="background:var(--primary-pale); color:var(--gold); padding:10px; border-radius:12px;"><i data-lucide="lock" style="width:20px; height:20px;"></i></div> <div style="flex:1; font-weight:700; font-size:15px;">Login & Security</div> <i data-lucide="chevron-right" style="color:var(--text-light); width:18px;"></i></div>
+              <div style="padding:18px 20px; display:flex; align-items:center; gap:16px; cursor:pointer;" onclick="openPaymentMethodsModal()"><div style="background:var(--primary-pale); color:var(--gold); padding:10px; border-radius:12px;"><i data-lucide="credit-card" style="width:20px; height:20px;"></i></div> <div style="flex:1; font-weight:700; font-size:15px;">Payment Methods</div> <i data-lucide="chevron-right" style="color:var(--text-light); width:18px;"></i></div>
             </div>
 
             <h3 style="font-size:13px; color:var(--text-light); margin-bottom:12px; text-transform:uppercase; letter-spacing:0.05em; font-weight:800;">App Settings</h3>
@@ -1369,6 +1369,15 @@ input:checked + .toggle-slider:before { transform: translateX(20px); }
 </div>
 
 <!-- MODALS -->
+  <!-- RESIDENT MODALS -->
+  <div class="add-modal-overlay" id="personal-info-modal"><div class="add-modal"><div class="add-modal-title"><i data-lucide="user"></i> Personal Information</div><div class="modal-grid" style="gap:12px;"><label style="font-size:11px; font-weight:800; color:var(--text-light); text-transform:uppercase; margin-bottom:-4px;">Nama Lengkap</label><input id="resident-name-input" class="form-input" placeholder="Nama Lengkap"><label style="font-size:11px; font-weight:800; color:var(--text-light); text-transform:uppercase; margin-bottom:-4px;">Nomor Unit</label><input id="resident-unit-input" class="form-input" placeholder="Nomor Unit (misal: 12B)"><label style="font-size:11px; font-weight:800; color:var(--text-light); text-transform:uppercase; margin-bottom:-4px;">Nomor HP</label><input id="resident-phone-input" class="form-input" placeholder="Nomor HP"></div><div class="modal-actions" style="margin-top:20px; display:flex; flex-direction:column; gap:8px;"><div style="display:flex; gap:8px; width:100%;"><button class="btn-cancel" style="flex:1;" onclick="closePersonalInfoModal()">Cancel</button><button class="btn-save" style="flex:1;" onclick="saveResidentProfileLocal()">Simpan Lokal</button></div><button class="btn-save" style="width:100%; background:#059669;" onclick="verifyResidentAccount()"><i data-lucide="shield-check"></i> Hubungkan & Verifikasi</button><button class="btn-cancel" style="width:100%; color:#ef4444; border-color:#ef4444; display:none;" id="unlink-resident-btn" onclick="unlinkResidentAccount()">Putuskan Hubungan</button></div></div></div>
+
+  <div class="add-modal-overlay" id="login-security-modal"><div class="add-modal"><div class="add-modal-title"><i data-lucide="lock"></i> Login & Security</div><div class="modal-grid" style="gap:12px;"><div style="background:var(--surface2); padding:12px; border-radius:12px; font-size:13px; line-height:1.4; color:var(--text);"><div style="margin-bottom:4px;"><strong>Status Akun:</strong> <span id="security-status-text">-</span></div><div><strong>PIN Keamanan:</strong> <span id="security-pin-status">Belum Aktif</span></div></div><label style="font-size:11px; font-weight:800; color:var(--text-light); text-transform:uppercase; margin-bottom:-4px;">Atur 4-Digit PIN Baru</label><input type="password" id="security-pin-input" class="form-input" maxlength="4" placeholder="••••" style="text-align:center; letter-spacing:0.5em; font-size:18px;"></div><div class="modal-actions" style="margin-top:20px; display:flex; gap:8px;"><button class="btn-cancel" style="flex:1;" onclick="closeLoginSecurityModal()">Cancel</button><button class="btn-save" style="flex:1;" onclick="saveLocalSecurityPin()">Simpan PIN</button></div><div style="margin-top:12px; text-align:center;"><button class="btn-cancel" style="border:none; color:#ef4444; font-size:12px; background:none; cursor:pointer;" onclick="clearLocalSecurityPin()">Hapus PIN</button></div></div></div>
+
+  <div class="add-modal-overlay" id="payment-methods-modal"><div class="add-modal" style="max-height:85vh; overflow-y:auto;"><div class="add-modal-title"><i data-lucide="credit-card"></i> Payment Methods</div><div class="modal-grid" style="gap:12px;"><div style="background:var(--surface2); padding:16px; border-radius:16px;"><div style="font-size:10px; text-transform:uppercase; color:var(--text-light); font-weight:800; margin-bottom:4px; letter-spacing:0.05em;">Rekening Transfer Resmi</div><div style="font-size:14px; font-weight:700; color:var(--text); white-space:pre-line; line-height:1.4;" id="pub-payment-account-details">Loading...</div></div><div id="pub-resident-dues-status-card" style="display:none; background:var(--primary-pale); border:1px solid rgba(198,169,105,0.3); padding:16px; border-radius:16px;"><div style="font-size:10px; text-transform:uppercase; color:var(--text-light); font-weight:800; margin-bottom:4px; letter-spacing:0.05em;">Status Tagihan Anda</div><div style="font-size:16px; font-weight:800; color:var(--text);" id="pub-resident-dues-status-text">-</div><div style="margin-top:12px; font-size:11px; font-weight:800; color:var(--text-light); text-transform:uppercase; letter-spacing:0.05em;">Histori Transaksi Warga:</div><div id="pub-resident-payment-history" style="font-size:12px; margin-top:6px; max-height:150px; overflow-y:auto; line-height:1.6; color:var(--text-muted);">Loading history...</div></div></div><div class="modal-actions" style="margin-top:20px;"><button class="btn-save" style="width:100%;" onclick="closePaymentMethodsModal()">Tutup</button></div></div></div>
+
+  <div class="add-modal-overlay" id="pin-verification-modal"><div class="add-modal" style="max-width:320px;"><div class="add-modal-title" style="text-align:center;"><i data-lucide="lock"></i> PIN Keamanan</div><div style="text-align:center; margin:16px 0;"><input type="password" id="verification-pin-input" class="form-input" maxlength="4" placeholder="••••" style="text-align:center; letter-spacing:0.5em; font-size:24px; width:140px; border-bottom:2px solid var(--border); border-top:none; border-left:none; border-right:none; background:none; outline:none;"></div><div class="modal-actions" style="display:flex; gap:8px;"><button class="btn-cancel" style="flex:1;" onclick="cancelPinVerification()">Batal</button><button class="btn-save" style="flex:1;" onclick="submitPinVerification()">Konfirmasi</button></div></div></div>
+
 <div class="add-modal-overlay" id="add-member-modal"><div class="add-modal"><div class="add-modal-title"><i data-lucide="plus"></i> Add Member</div><div class="modal-grid"><input id="add-name" placeholder="Full Name"><input id="add-email" placeholder="Email"><input id="add-unit" placeholder="Unit"><input id="add-phone" placeholder="Phone"><input id="add-address" placeholder="Address"><input type="number" id="add-residents" placeholder="Residents" value="1"><select id="add-status"><option value="active">Active</option><option value="inactive">Inactive</option></select></div><div class="modal-actions"><button class="btn-cancel" onclick="closeAddMemberModal()">Cancel</button><button class="btn-save" onclick="saveNewMember()">Save</button></div></div></div>
 <div class="add-modal-overlay" id="payment-modal"><div class="add-modal"><div class="add-modal-title"><i data-lucide="wallet"></i> Record Payment</div><div class="modal-grid"><select id="payment-member"></select><input type="month" id="payment-month"><input type="number" id="payment-duration" value="1" min="1"><input type="number" id="payment-amount" placeholder="Amount"><div id="payment-total-info" style="background:var(--surface2); padding:12px; border-radius:12px; text-align:center; font-weight:800;">$0</div></div><div class="modal-actions"><button class="btn-cancel" onclick="closePaymentModal()">Cancel</button><button class="btn-save" onclick="savePayment()">Save</button></div></div></div>
 <div class="add-modal-overlay" id="transaction-modal"><div class="add-modal"><div class="add-modal-title"><i data-lucide="wallet"></i> Transaction</div><div class="modal-grid"><input type="date" id="transaction-date"><input id="transaction-desc" placeholder="Description"><select id="transaction-type"><option value="income">Income</option><option value="expense">Expense</option></select><input type="number" id="transaction-amount" placeholder="Amount"></div><div class="modal-actions"><button class="btn-cancel" onclick="closeTransactionModal()">Cancel</button><button class="btn-save" onclick="saveTransaction()">Save</button></div></div></div>
@@ -1742,7 +1751,7 @@ async function toggleNotifications(checkbox) {
 }
 
 // Public data load
-async function loadPublicData() { await Promise.all([loadMembers(), loadSettings(), loadAnnouncements(), loadEvents(), loadPolls(), loadBoardMembers(), loadTreasury(), loadServiceRequests(), loadGallery(), loadAssets()]); if (appSettings?.home_bg_image) { document.documentElement.style.setProperty('--pub-home-bg', `url('${appSettings.home_bg_image}')`); } renderPublicMembers(); renderPublicBoard(); renderPublicGallery(); renderPublicAssets(); renderAnnouncements(); loadPublicEvents(); loadPublicPolls(); document.getElementById('pub-stat-members').textContent = allMembers.length; const totalIncome = allTreasury.filter(t => t.type==='income').reduce((s,t)=>s+t.amount,0); const totalExpense = allTreasury.filter(t => t.type==='expense').reduce((s,t)=>s+t.amount,0); document.getElementById('pub-stat-treasury').innerHTML = formatCurrency(totalIncome - totalExpense); const tDateEl = document.getElementById('pub-stat-treasury-date'); if(tDateEl) tDateEl.textContent = `Balance as of ${new Date().toLocaleDateString('en-US',{month:'long',year:'numeric'})}`; const upcomingEvents = await supabase.from('events').select('id').gte('event_date', new Date().toISOString().split('T')[0]); document.getElementById('pub-stat-events').textContent = upcomingEvents.data?.length || 0; const pendingReqs = allServiceRequests.filter(r => r.status === 'pending'); document.getElementById('pub-stat-requests').textContent = pendingReqs.length; /* renderDuesChart removed */ await initVisitorCounter(); }
+async function loadPublicData() { await Promise.all([loadMembers(), loadSettings(), loadAnnouncements(), loadEvents(), loadPolls(), loadBoardMembers(), loadTreasury(), loadServiceRequests(), loadGallery(), loadAssets()]); if (appSettings?.home_bg_image) { document.documentElement.style.setProperty('--pub-home-bg', `url('${appSettings.home_bg_image}')`); } renderPublicMembers(); renderPublicBoard(); renderPublicGallery(); renderPublicAssets(); renderAnnouncements(); loadPublicEvents(); loadPublicPolls(); document.getElementById('pub-stat-members').textContent = allMembers.length; const totalIncome = allTreasury.filter(t => t.type==='income').reduce((s,t)=>s+t.amount,0); const totalExpense = allTreasury.filter(t => t.type==='expense').reduce((s,t)=>s+t.amount,0); document.getElementById('pub-stat-treasury').innerHTML = formatCurrency(totalIncome - totalExpense); const tDateEl = document.getElementById('pub-stat-treasury-date'); if(tDateEl) tDateEl.textContent = `Balance as of ${new Date().toLocaleDateString('en-US',{month:'long',year:'numeric'})}`; const upcomingEvents = await supabase.from('events').select('id').gte('event_date', new Date().toISOString().split('T')[0]); document.getElementById('pub-stat-events').textContent = upcomingEvents.data?.length || 0; const pendingReqs = allServiceRequests.filter(r => r.status === 'pending'); document.getElementById('pub-stat-requests').textContent = pendingReqs.length; /* renderDuesChart removed */ await initVisitorCounter(); loadResidentProfile(); }
 async function initVisitorCounter() { let stats = appSettings?.visitor_stats ? JSON.parse(appSettings.visitor_stats) : { total:0, daily:0, monthly:0 }; const today = new Date().toISOString().split('T')[0]; const thisMonth = new Date().toISOString().slice(0,7); if(!sessionStorage.getItem('communityhub_visited')) { sessionStorage.setItem('communityhub_visited','1'); stats.total = (stats.total||0)+1; if(stats.last_day === today) stats.daily = (stats.daily||0)+1; else { stats.daily = 1; stats.last_day = today; } if(stats.last_month === thisMonth) stats.monthly = (stats.monthly||0)+1; else { stats.monthly = 1; stats.last_month = thisMonth; } await supabase.from('communities').update({ settings: { ...appSettings, visitor_stats: JSON.stringify(stats) } }).eq('id', currentCommunityId); } document.querySelectorAll('.visit-daily').forEach(el => el.textContent = stats.daily||0); document.querySelectorAll('.visit-monthly').forEach(el => el.textContent = stats.monthly||0); document.querySelectorAll('.visit-total').forEach(el => el.textContent = stats.total||0); }
 
 // Navigation & UI helpers
@@ -1790,6 +1799,266 @@ function closeBoardMemberModal() { document.getElementById('board-member-modal')
 function closeGalleryModal() { document.getElementById('gallery-modal').classList.remove('open'); }
 function closeAssetModal() { document.getElementById('asset-modal').classList.remove('open'); }
 function closeAssetRequestModal() { document.getElementById('asset-request-modal').classList.remove('open'); }
+
+// Resident Profile & Settings
+let residentProfile = {
+  full_name: 'Sarah Johnson',
+  unit_number: '12B',
+  phone: '15551234567',
+  is_verified: true,
+  member_id: null
+};
+let pendingPinAction = null;
+
+function loadResidentProfile() {
+  const stored = localStorage.getItem('resident_profile');
+  if (stored) {
+    residentProfile = JSON.parse(stored);
+  } else {
+    residentProfile = {
+      full_name: 'Sarah Johnson',
+      unit_number: '12B',
+      phone: '15551234567',
+      is_verified: true,
+      member_id: null
+    };
+  }
+  updateResidentUI();
+}
+
+function updateResidentUI() {
+  const dashNameEl = document.getElementById('pub-dash-name');
+  if (dashNameEl) dashNameEl.innerHTML = `${escapeHtml(residentProfile.full_name)} 👋`;
+
+  const profNameEl = document.getElementById('pub-profile-name');
+  if (profNameEl) profNameEl.textContent = residentProfile.full_name;
+
+  const profUnitEl = document.getElementById('pub-profile-unit');
+  if (profUnitEl) profUnitEl.textContent = `Unit ${residentProfile.unit_number} • ${currentCommunityName || 'The Hamilton'}`;
+
+  const dashAvatarEl = document.getElementById('pub-dash-avatar');
+  if (dashAvatarEl) dashAvatarEl.textContent = (residentProfile.full_name?.charAt(0) || 'R').toUpperCase();
+
+  const profAvatarEl = document.getElementById('pub-profile-avatar');
+  if (profAvatarEl) profAvatarEl.textContent = (residentProfile.full_name?.charAt(0) || 'R').toUpperCase();
+
+  const badgeEl = document.getElementById('pub-profile-badge');
+  if (badgeEl) {
+    if (residentProfile.is_verified) {
+      badgeEl.innerHTML = `<i data-lucide="shield-check" style="width:14px; height:14px; margin-bottom:-2px;"></i> Verified Resident`;
+      badgeEl.style.color = 'var(--gold)';
+      badgeEl.style.background = 'rgba(198,169,105,0.2)';
+      badgeEl.style.borderColor = 'rgba(198,169,105,0.3)';
+    } else {
+      badgeEl.innerHTML = `<i data-lucide="shield-alert" style="width:14px; height:14px; margin-bottom:-2px;"></i> Guest / Unverified`;
+      badgeEl.style.color = 'var(--text-light)';
+      badgeEl.style.background = 'rgba(100,116,139,0.1)';
+      badgeEl.style.borderColor = 'rgba(100,116,139,0.2)';
+    }
+    lucide.createIcons();
+  }
+}
+
+// PIN Security Gate
+function verifyPinAccess(onSuccess) {
+  const pin = localStorage.getItem('resident_security_pin');
+  if (pin) {
+    pendingPinAction = onSuccess;
+    document.getElementById('verification-pin-input').value = '';
+    document.getElementById('pin-verification-modal').classList.add('open');
+  } else {
+    onSuccess();
+  }
+}
+function submitPinVerification() {
+  const inputPin = document.getElementById('verification-pin-input').value;
+  const storedPin = localStorage.getItem('resident_security_pin');
+  if (inputPin === storedPin) {
+    document.getElementById('pin-verification-modal').classList.remove('open');
+    if (pendingPinAction) {
+      const action = pendingPinAction;
+      pendingPinAction = null;
+      action();
+    }
+  } else {
+    showToast('PIN salah!');
+    document.getElementById('verification-pin-input').value = '';
+  }
+}
+function cancelPinVerification() {
+  document.getElementById('pin-verification-modal').classList.remove('open');
+  pendingPinAction = null;
+}
+
+// Personal Info Modal
+function openPersonalInfoModal() {
+  verifyPinAccess(() => {
+    document.getElementById('resident-name-input').value = residentProfile.full_name;
+    document.getElementById('resident-unit-input').value = residentProfile.unit_number;
+    document.getElementById('resident-phone-input').value = residentProfile.phone || '';
+    
+    const isVerified = residentProfile.is_verified;
+    document.getElementById('resident-name-input').disabled = isVerified;
+    document.getElementById('resident-unit-input').disabled = isVerified;
+    document.getElementById('resident-phone-input').disabled = isVerified;
+    document.getElementById('unlink-resident-btn').style.display = isVerified ? 'block' : 'none';
+    
+    document.getElementById('personal-info-modal').classList.add('open');
+  });
+}
+function closePersonalInfoModal() {
+  document.getElementById('personal-info-modal').classList.remove('open');
+}
+function saveResidentProfileLocal() {
+  if (residentProfile.is_verified) {
+    showToast('Akun terverifikasi tidak bisa diedit secara lokal.');
+    return;
+  }
+  const name = document.getElementById('resident-name-input').value.trim();
+  const unit = document.getElementById('resident-unit-input').value.trim();
+  const phone = document.getElementById('resident-phone-input').value.trim();
+  if (!name || !unit) {
+    showToast('Nama Lengkap dan Unit wajib diisi');
+    return;
+  }
+  residentProfile = {
+    full_name: name,
+    unit_number: unit,
+    phone: phone,
+    is_verified: false,
+    member_id: null
+  };
+  localStorage.setItem('resident_profile', JSON.stringify(residentProfile));
+  updateResidentUI();
+  closePersonalInfoModal();
+  showToast('Profil lokal berhasil disimpan!');
+}
+async function verifyResidentAccount() {
+  if (residentProfile.is_verified) {
+    showToast('Akun Anda sudah terverifikasi.');
+    return;
+  }
+  const name = document.getElementById('resident-name-input').value.trim();
+  const phone = document.getElementById('resident-phone-input').value.trim();
+  if (!name) {
+    showToast('Masukkan Nama Lengkap untuk verifikasi');
+    return;
+  }
+  showToast('Memverifikasi data dengan server...');
+  
+  const { data, error } = await supabase
+    .from('members')
+    .select('*')
+    .eq('community_id', currentCommunityId)
+    .ilike('full_name', name)
+    .limit(1);
+
+  if (error) {
+    showToast('Koneksi gagal: ' + error.message);
+    return;
+  }
+  if (data && data.length > 0) {
+    const member = data[0];
+    residentProfile = {
+      full_name: member.full_name,
+      unit_number: member.unit_number || member.address || 'Verified',
+      phone: member.phone || phone || '',
+      is_verified: true,
+      member_id: member.id
+    };
+    localStorage.setItem('resident_profile', JSON.stringify(residentProfile));
+    updateResidentUI();
+    closePersonalInfoModal();
+    showToast('Verifikasi Berhasil! Akun Anda terhubung.');
+  } else {
+    showToast('Nama tidak ditemukan di database warga.');
+  }
+}
+function unlinkResidentAccount() {
+  if (confirm('Apakah Anda yakin ingin memutuskan hubungan akun warga terverifikasi ini?')) {
+    residentProfile.is_verified = false;
+    residentProfile.member_id = null;
+    localStorage.setItem('resident_profile', JSON.stringify(residentProfile));
+    updateResidentUI();
+    closePersonalInfoModal();
+    showToast('Hubungan akun terputus.');
+  }
+}
+
+// Login & Security Modal
+function openLoginSecurityModal() {
+  document.getElementById('security-status-text').textContent = residentProfile.is_verified ? 'Verified Resident (Terhubung Database)' : 'Guest / Unverified (Profil Lokal)';
+  const pin = localStorage.getItem('resident_security_pin');
+  document.getElementById('security-pin-status').innerHTML = pin ? '<span style="color:#059669; font-weight:bold;">Aktif</span>' : 'Belum Aktif';
+  document.getElementById('security-pin-input').value = '';
+  document.getElementById('login-security-modal').classList.add('open');
+}
+function closeLoginSecurityModal() {
+  document.getElementById('login-security-modal').classList.remove('open');
+}
+function saveLocalSecurityPin() {
+  const pin = document.getElementById('security-pin-input').value;
+  if (!pin || pin.length !== 4 || isNaN(pin)) {
+    showToast('PIN harus berupa 4 digit angka');
+    return;
+  }
+  localStorage.setItem('resident_security_pin', pin);
+  showToast('PIN Pengaman lokal berhasil disimpan!');
+  closeLoginSecurityModal();
+}
+function clearLocalSecurityPin() {
+  if (confirm('Hapus PIN Pengaman lokal?')) {
+    localStorage.removeItem('resident_security_pin');
+    showToast('PIN Pengaman lokal telah dihapus');
+    closeLoginSecurityModal();
+  }
+}
+
+// Payment Methods & Dues Info Modal
+function openPaymentMethodsModal() {
+  verifyPinAccess(() => {
+    const bankDetails = appSettings.payment_account || 'Hubungi pengurus RT/Admin untuk instruksi transfer rekening.';
+    document.getElementById('pub-payment-account-details').textContent = bankDetails;
+    
+    const statusCard = document.getElementById('pub-resident-dues-status-card');
+    const statusText = document.getElementById('pub-resident-dues-status-text');
+    const historyContainer = document.getElementById('pub-resident-payment-history');
+    
+    if (residentProfile.is_verified && residentProfile.member_id) {
+      statusCard.style.display = 'block';
+      statusText.textContent = 'Memindai iuran...';
+      historyContainer.textContent = 'Memuat histori...';
+      
+      const currentMonthDues = allDues.find(d => d.member_id === residentProfile.member_id && d.due_month === currentMonth);
+      if (currentMonthDues) {
+        statusText.innerHTML = currentMonthDues.status === 'paid' 
+          ? `<span style="color:#059669;"><i data-lucide="check-circle" style="width:16px; margin-bottom:-3px;"></i> LUNAS (${formatCurrency(currentMonthDues.paid_amount)})</span>`
+          : `<span style="color:#ef4444;"><i data-lucide="alert-triangle" style="width:16px; margin-bottom:-3px;"></i> BELUM DIBAYAR (${formatCurrency(appSettings.monthly_dues_amount || 150)})</span>`;
+      } else {
+        statusText.innerHTML = `<span style="color:#ef4444;"><i data-lucide="alert-triangle" style="width:16px; margin-bottom:-3px;"></i> BELUM DIBAYAR (${formatCurrency(appSettings.monthly_dues_amount || 150)})</span>`;
+      }
+      
+      const userPayments = allDues.filter(d => d.member_id === residentProfile.member_id && d.status === 'paid');
+      if (userPayments && userPayments.length > 0) {
+        historyContainer.innerHTML = userPayments.map(p => `
+          <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(0,0,0,0.05);">
+            <span>Iuran Bulan ${p.due_month}</span>
+            <span style="font-weight:bold; color:#059669;">Lunas (${formatCurrency(p.paid_amount)})</span>
+          </div>
+        `).join('');
+      } else {
+        historyContainer.textContent = 'Belum ada riwayat iuran tercatat.';
+      }
+      lucide.createIcons();
+    } else {
+      statusCard.style.display = 'none';
+    }
+    document.getElementById('payment-methods-modal').classList.add('open');
+  });
+}
+function closePaymentMethodsModal() {
+  document.getElementById('payment-methods-modal').classList.remove('open');
+}
 function openAddMemberModal() { document.getElementById('add-member-modal').classList.add('open'); }
 function openAddBoardMemberModal() { document.getElementById('board-id').value = ''; document.getElementById('board-name').value = ''; document.getElementById('board-position').value = ''; document.getElementById('board-phone').value = ''; document.getElementById('board-order').value = ''; document.getElementById('board-member-modal').classList.add('open'); }
 function openCreateAnnouncementModal() { document.getElementById('announcement-modal').classList.add('open'); }
