@@ -1370,7 +1370,7 @@ input:checked + .toggle-slider:before { transform: translateX(20px); }
 
 <!-- MODALS -->
   <!-- RESIDENT MODALS -->
-  <div class="add-modal-overlay" id="personal-info-modal"><div class="add-modal"><div class="add-modal-title"><i data-lucide="user"></i> Personal Information</div><div class="modal-grid" style="gap:12px;"><label style="font-size:11px; font-weight:800; color:var(--text-light); text-transform:uppercase; margin-bottom:-4px;">Nama Lengkap</label><input id="resident-name-input" class="form-input" placeholder="Nama Lengkap"><label style="font-size:11px; font-weight:800; color:var(--text-light); text-transform:uppercase; margin-bottom:-4px;">Nomor Unit</label><input id="resident-unit-input" class="form-input" placeholder="Nomor Unit (misal: 12B)"><label style="font-size:11px; font-weight:800; color:var(--text-light); text-transform:uppercase; margin-bottom:-4px;">Nomor HP</label><input id="resident-phone-input" class="form-input" placeholder="Nomor HP"></div><div class="modal-actions" style="margin-top:20px; display:flex; flex-direction:column; gap:8px;"><div style="display:flex; gap:8px; width:100%;"><button class="btn-cancel" style="flex:1;" onclick="closePersonalInfoModal()">Cancel</button><button class="btn-save" style="flex:1;" onclick="saveResidentProfileLocal()">Simpan Lokal</button></div><button class="btn-save" style="width:100%; background:#059669;" onclick="verifyResidentAccount()"><i data-lucide="shield-check"></i> Hubungkan & Verifikasi</button><button class="btn-cancel" style="width:100%; color:#ef4444; border-color:#ef4444; display:none;" id="unlink-resident-btn" onclick="unlinkResidentAccount()">Putuskan Hubungan</button></div></div></div>
+  <div class="add-modal-overlay" id="personal-info-modal"><div class="add-modal"><div class="add-modal-title"><i data-lucide="user"></i> Personal Information</div><div style="display:flex; flex-direction:column; align-items:center; gap:8px; margin-bottom:12px;"><div id="resident-avatar-preview" style="width:70px; height:70px; border-radius:50%; background:var(--gold); display:flex; align-items:center; justify-content:center; font-size:24px; font-weight:800; color:var(--navy); border:2px solid rgba(255,255,255,0.2); position:relative; cursor:pointer; overflow:hidden;" onclick="document.getElementById('resident-avatar-file').click()">S</div><button class="btn-cancel" style="padding:4px 8px; font-size:11px; height:auto; border-radius:6px;" onclick="document.getElementById('resident-avatar-file').click()">Pilih Foto</button><input type="file" id="resident-avatar-file" accept="image/*" style="display:none;" onchange="handleResidentAvatarChange(event)"></div><div class="modal-grid" style="gap:12px;"><label style="font-size:11px; font-weight:800; color:var(--text-light); text-transform:uppercase; margin-bottom:-4px;">Nama Lengkap</label><input id="resident-name-input" class="form-input" placeholder="Nama Lengkap"><label style="font-size:11px; font-weight:800; color:var(--text-light); text-transform:uppercase; margin-bottom:-4px;">Nomor Unit</label><input id="resident-unit-input" class="form-input" placeholder="Nomor Unit (misal: 12B)"><label style="font-size:11px; font-weight:800; color:var(--text-light); text-transform:uppercase; margin-bottom:-4px;">Nomor HP</label><input id="resident-phone-input" class="form-input" placeholder="Nomor HP"></div><div class="modal-actions" style="margin-top:20px; display:flex; flex-direction:column; gap:8px;"><div style="display:flex; gap:8px; width:100%;"><button class="btn-cancel" style="flex:1;" onclick="closePersonalInfoModal()">Cancel</button><button class="btn-save" style="flex:1;" onclick="saveResidentProfileLocal()">Simpan Lokal</button></div><button class="btn-save" style="width:100%; background:#059669;" onclick="verifyResidentAccount()"><i data-lucide="shield-check"></i> Hubungkan & Verifikasi</button><button class="btn-cancel" style="width:100%; color:#ef4444; border-color:#ef4444; display:none;" id="unlink-resident-btn" onclick="unlinkResidentAccount()">Putuskan Hubungan</button></div></div></div>
 
   <div class="add-modal-overlay" id="login-security-modal"><div class="add-modal"><div class="add-modal-title"><i data-lucide="lock"></i> Login & Security</div><div class="modal-grid" style="gap:12px;"><div style="background:var(--surface2); padding:12px; border-radius:12px; font-size:13px; line-height:1.4; color:var(--text);"><div style="margin-bottom:4px;"><strong>Status Akun:</strong> <span id="security-status-text">-</span></div><div><strong>PIN Keamanan:</strong> <span id="security-pin-status">Belum Aktif</span></div></div><label style="font-size:11px; font-weight:800; color:var(--text-light); text-transform:uppercase; margin-bottom:-4px;">Atur 4-Digit PIN Baru</label><input type="password" id="security-pin-input" class="form-input" maxlength="4" placeholder="••••" style="text-align:center; letter-spacing:0.5em; font-size:18px;"></div><div class="modal-actions" style="margin-top:20px; display:flex; gap:8px;"><button class="btn-cancel" style="flex:1;" onclick="closeLoginSecurityModal()">Cancel</button><button class="btn-save" style="flex:1;" onclick="saveLocalSecurityPin()">Simpan PIN</button></div><div style="margin-top:12px; text-align:center;"><button class="btn-cancel" style="border:none; color:#ef4444; font-size:12px; background:none; cursor:pointer;" onclick="clearLocalSecurityPin()">Hapus PIN</button></div></div></div>
 
@@ -1384,7 +1384,7 @@ input:checked + .toggle-slider:before { transform: translateX(20px); }
 <div class="add-modal-overlay" id="announcement-modal"><div class="add-modal"><div class="add-modal-title"><i data-lucide="megaphone"></i> Announcement</div><div class="modal-grid"><input id="announcement-title" placeholder="Title"><textarea id="announcement-content" rows="3" placeholder="Content"></textarea><select id="announcement-category"><option value="info">Info</option><option value="urgent">Urgent</option><option value="event">Event</option></select><div style="font-size:12px; font-weight:bold; margin-top:8px;">Cover Image (Hybrid)</div><input type="file" id="announcement-file" accept="image/*" style="font-size:12px; padding:4px;"><input id="announcement-img-url" placeholder="OR Paste Image URL here" style="margin-top:4px;"></div><div class="modal-actions"><button class="btn-cancel" onclick="closeAnnouncementModal()">Cancel</button><button class="btn-save" onclick="saveAnnouncement()">Publish</button></div></div></div>
 <div class="add-modal-overlay" id="event-modal"><div class="add-modal"><div class="add-modal-title"><i data-lucide="calendar"></i> Event</div><div class="modal-grid"><input type="hidden" id="event-id"><input id="event-title" placeholder="Title"><input type="date" id="event-date"><input id="event-time" placeholder="Time"><select id="event-type"><option value="meeting">Meeting</option><option value="social">Social</option><option value="patrol">Patrol</option></select><textarea id="event-desc" rows="2" placeholder="Description"></textarea><div style="font-size:12px; font-weight:bold; margin-top:8px;">Event Cover (Hybrid)</div><input type="file" id="event-file" accept="image/*" style="font-size:12px; padding:4px;"><input id="event-img-url" placeholder="OR Paste Image URL here" style="margin-top:4px;"></div><div class="modal-actions"><button class="btn-cancel" onclick="closeEventModal()">Cancel</button><button class="btn-save" onclick="saveEvent()">Save</button></div></div></div>
 <div class="add-modal-overlay" id="poll-modal"><div class="add-modal"><div class="add-modal-title"><i data-lucide="vote"></i> Create Poll</div><div class="modal-grid"><input id="poll-question" placeholder="Question"><input id="poll-options" placeholder="Option1, Option2, Option3"></div><div class="modal-actions"><button class="btn-cancel" onclick="closePollModal()">Cancel</button><button class="btn-save" onclick="savePoll()">Publish</button></div></div></div>
-<div class="add-modal-overlay" id="board-member-modal"><div class="add-modal"><div class="add-modal-title"><i data-lucide="users"></i> Board Member</div><div class="modal-grid"><input type="hidden" id="board-id"><input id="board-name" placeholder="Name"><input id="board-position" placeholder="Position"><input id="board-phone" placeholder="Phone"><input type="number" id="board-order" placeholder="Order"></div><div class="modal-actions"><button class="btn-cancel" onclick="closeBoardMemberModal()">Cancel</button><button class="btn-save" onclick="saveBoardMember()">Save</button></div></div></div>
+<div class="add-modal-overlay" id="board-member-modal"><div class="add-modal"><div class="add-modal-title"><i data-lucide="users"></i> Board Member</div><div class="modal-grid"><input type="hidden" id="board-id"><input id="board-name" placeholder="Name"><input id="board-position" placeholder="Position"><input id="board-phone" placeholder="Phone"><input type="number" id="board-order" placeholder="Order"><div style="font-size:12px; font-weight:bold; margin-top:8px;">Board Member Photo (Hybrid)</div><input type="file" id="board-member-file" accept="image/*" style="font-size:12px; padding:4px;"><input id="board-avatar-url" placeholder="OR Paste Image URL here" style="margin-top:4px;"></div><div class="modal-actions"><button class="btn-cancel" onclick="closeBoardMemberModal()">Cancel</button><button class="btn-save" onclick="saveBoardMember()">Save</button></div></div></div>
 <div class="add-modal-overlay" id="gallery-modal"><div class="add-modal"><div class="add-modal-title"><i data-lucide="camera"></i> Add Album</div><div class="modal-grid"><input type="hidden" id="gallery-id"><input id="gallery-name" placeholder="Album Name"><input type="date" id="gallery-date"><textarea id="gallery-desc" rows="2" placeholder="Description"></textarea><input id="gallery-link" placeholder="Google Photos Link"><input id="gallery-cover" placeholder="Cover Image URL (optional)"></div><div class="modal-actions"><button class="btn-cancel" onclick="closeGalleryModal()">Cancel</button><button class="btn-save" onclick="saveGallery()">Save</button></div></div></div>
 <div class="add-modal-overlay" id="asset-modal"><div class="add-modal"><div class="add-modal-title"><i data-lucide="box"></i> Add Asset</div><div class="modal-grid"><input type="hidden" id="asset-id"><input id="asset-name" placeholder="Asset Name"><input type="number" id="asset-total" placeholder="Total Quantity" value="1"><select id="asset-condition"><option value="good">Good</option><option value="maintenance">Maintenance</option><option value="damaged">Damaged</option></select><input id="asset-location" placeholder="Location"><textarea id="asset-desc" rows="2" placeholder="Description"></textarea></div><div class="modal-actions"><button class="btn-cancel" onclick="closeAssetModal()">Cancel</button><button class="btn-save" onclick="saveAsset()">Save</button></div></div></div>
 
@@ -1659,10 +1659,84 @@ async function castVote(pollId) { const selected = document.querySelector(`input
 
 // Board members
 async function renderBoardAdmin() { await loadBoardMembers(); document.getElementById('board-table-body').innerHTML = allBoardMembers.map(b => `<tr><td>${b.display_order||0}</td><td>${escapeHtml(b.full_name)}</td><td>${escapeHtml(b.position)}</td><td>${b.phone||'-'}</td><td><button class="icon-btn" onclick="openEditBoardMember(${b.id})"><i data-lucide="edit-2"></i></button> <button class="icon-btn danger" onclick="deleteBoardMember(${b.id})"><i data-lucide="trash-2"></i></button></td></tr>`).join(''); setTimeout(()=>lucide.createIcons(),50); }
-async function saveBoardMember() { const id = document.getElementById('board-id')?.value, name = document.getElementById('board-name')?.value, pos = document.getElementById('board-position')?.value, phone = document.getElementById('board-phone')?.value, order = parseInt(document.getElementById('board-order')?.value)||0; if(!name || !pos) { showToast('Name and position required'); return; } let memberId = null; const { data: memberData } = await supabase.from('members').select('id').eq('full_name', name).eq('community_id', currentCommunityId).limit(1); if(memberData && memberData.length > 0) { memberId = memberData[0].id; } else { const { data: newMember, error: memberErr } = await supabase.from('members').insert([{ community_id:currentCommunityId, full_name:name, phone:phone||'', status:'active' }]).select('id').single(); if(memberErr) { showToast('Failed to link member: ' + memberErr.message); return; } memberId = newMember.id; } if(id) { const { error: err } = await supabase.from('board_members').update({ member_id:memberId, position:pos, display_order:order }).eq('id', id); if(err) { showToast('Failed to save: ' + err.message); return; } } else { const { error: err } = await supabase.from('board_members').insert([{ community_id:currentCommunityId, member_id:memberId, position:pos, display_order:order }]); if(err) { showToast('Failed to save: ' + err.message); return; } } showToast('Saved'); closeBoardMemberModal(); await renderBoardAdmin(); await renderPublicBoard(); }
+async function saveBoardMember() {
+  const id = document.getElementById('board-id')?.value,
+        name = document.getElementById('board-name')?.value,
+        pos = document.getElementById('board-position')?.value,
+        phone = document.getElementById('board-phone')?.value,
+        order = parseInt(document.getElementById('board-order')?.value)||0;
+  let avatarUrl = document.getElementById('board-avatar-url')?.value || '';
+
+  if(!name || !pos) { showToast('Name and position required'); return; }
+
+  const fileInput = document.getElementById('board-member-file');
+  if (fileInput && fileInput.files && fileInput.files[0]) {
+    try {
+      showToast('Compressing image...');
+      const dataUrl = await compressImage(fileInput.files[0], 50);
+      showToast('Uploading image...');
+      const uploadedUrl = await uploadImageToSupabase(dataUrl, 'public_images');
+      if (uploadedUrl) {
+        avatarUrl = uploadedUrl;
+      }
+    } catch(e) {
+      showToast('Image upload failed');
+      console.error(e);
+    }
+  }
+
+  let memberId = null;
+  const { data: memberData } = await supabase.from('members').select('id').eq('full_name', name).eq('community_id', currentCommunityId).limit(1);
+  if(memberData && memberData.length > 0) {
+    memberId = memberData[0].id;
+  } else {
+    const { data: newMember, error: memberErr } = await supabase.from('members').insert([{ community_id:currentCommunityId, full_name:name, phone:phone||'', status:'active' }]).select('id').single();
+    if(memberErr) { showToast('Failed to link member: ' + memberErr.message); return; }
+    memberId = newMember.id;
+  }
+
+  if(id) {
+    const { error: err } = await supabase.from('board_members').update({ member_id:memberId, position:pos, display_order:order, avatar_url:avatarUrl || null }).eq('id', id);
+    if(err) { showToast('Failed to save: ' + err.message); return; }
+  } else {
+    const { error: err } = await supabase.from('board_members').insert([{ community_id:currentCommunityId, member_id:memberId, position:pos, display_order:order, avatar_url:avatarUrl || null }]);
+    if(err) { showToast('Failed to save: ' + err.message); return; }
+  }
+
+  showToast('Saved');
+  closeBoardMemberModal();
+  await renderBoardAdmin();
+  await renderPublicBoard();
+}
 async function deleteBoardMember(id) { if(!confirm('Delete?')) return; await supabase.from('board_members').delete().eq('id', id); showToast('Deleted'); await renderBoardAdmin(); await renderPublicBoard(); }
-function openEditBoardMember(id) { const b = allBoardMembers.find(m => m.id === id); if(!b) return; document.getElementById('board-id').value = b.id; document.getElementById('board-name').value = b.full_name; document.getElementById('board-position').value = b.position; document.getElementById('board-phone').value = b.phone||''; document.getElementById('board-order').value = b.display_order||0; document.getElementById('board-member-modal').classList.add('open'); }
-async function renderPublicBoard() { await loadBoardMembers(); document.getElementById('public-board-list').innerHTML = (allBoardMembers||[]).map(b => `<div class="board-card ${b.position?.toLowerCase().includes('president')?'president':''}"><div class="board-avatar">${(b.full_name?.charAt(0)||'B').toUpperCase()}</div><div class="board-info"><div class="board-role">${escapeHtml(b.position)}</div><div class="board-name">${escapeHtml(b.full_name)}</div></div>${b.phone ? `<a class="board-contact-btn" href="https://wa.me/${b.phone.replace(/[^0-9]/g,'')}"><i data-lucide="message-square"></i> Contact</a>` : ''}</div>`).join(''); setTimeout(()=>lucide.createIcons(), 50); }
+function openEditBoardMember(id) {
+  const b = allBoardMembers.find(m => m.id === id);
+  if(!b) return;
+  document.getElementById('board-id').value = b.id;
+  document.getElementById('board-name').value = b.full_name;
+  document.getElementById('board-position').value = b.position;
+  document.getElementById('board-phone').value = b.phone||'';
+  document.getElementById('board-order').value = b.display_order||0;
+  document.getElementById('board-avatar-url').value = b.avatar_url||'';
+  document.getElementById('board-member-file').value = '';
+  document.getElementById('board-member-modal').classList.add('open');
+}
+async function renderPublicBoard() {
+  await loadBoardMembers();
+  document.getElementById('public-board-list').innerHTML = (allBoardMembers||[]).map(b => `
+    <div class="board-card ${b.position?.toLowerCase().includes('president')?'president':''}">
+      <div class="board-avatar" style="overflow:hidden; display:flex; align-items:center; justify-content:center;">
+        ${b.avatar_url ? `<img src="${b.avatar_url}" style="width:100%; height:100%; object-fit:cover; border-radius:14px;">` : (b.full_name?.charAt(0)||'B').toUpperCase()}
+      </div>
+      <div class="board-info">
+        <div class="board-role">${escapeHtml(b.position)}</div>
+        <div class="board-name">${escapeHtml(b.full_name)}</div>
+      </div>
+      ${b.phone ? `<a class="board-contact-btn" href="https://wa.me/${b.phone.replace(/[^0-9]/g,'')}"><i data-lucide="message-square"></i> Contact</a>` : ''}
+    </div>
+  `).join('');
+  setTimeout(()=>lucide.createIcons(), 50);
+}
 
 // Gallery
 async function renderGalleryAdmin() { await loadGallery(); document.getElementById('gallery-table-body').innerHTML = allGallery.map(g => `<tr><td>${formatDate(g.date)}</td><td>${escapeHtml(g.name)}</td><td><button class="icon-btn" onclick="editGallery('${g.id}')"><i data-lucide="edit-2"></i></button> <button class="icon-btn danger" onclick="deleteGallery('${g.id}')"><i data-lucide="trash-2"></i></button></td></tr>`).join(''); }
@@ -1830,6 +1904,53 @@ function loadResidentProfile() {
   updateResidentUI();
 }
 
+function handleResidentAvatarChange(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const img = new Image();
+    img.onload = function() {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const maxDim = 150;
+      let w = img.width;
+      let h = img.height;
+      if (w > h) {
+        if (w > maxDim) {
+          h = Math.round(h * maxDim / w);
+          w = maxDim;
+        }
+      } else {
+        if (h > maxDim) {
+          w = Math.round(w * maxDim / h);
+          h = maxDim;
+        }
+      }
+      canvas.width = w;
+      canvas.height = h;
+      ctx.drawImage(img, 0, 0, w, h);
+      
+      const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+      
+      const previewEl = document.getElementById('resident-avatar-preview');
+      if (previewEl) {
+        previewEl.innerHTML = `<img src="${compressedDataUrl}" style="width:100%; height:100%; object-fit:cover;">`;
+      }
+      
+      residentProfile.avatar_data_url = compressedDataUrl;
+      
+      if (residentProfile.is_verified) {
+        localStorage.setItem('resident_profile', JSON.stringify(residentProfile));
+        updateResidentUI();
+      }
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
 function updateResidentUI() {
   const dashNameEl = document.getElementById('pub-dash-name');
   if (dashNameEl) dashNameEl.innerHTML = `${escapeHtml(residentProfile.full_name)} 👋`;
@@ -1841,10 +1962,26 @@ function updateResidentUI() {
   if (profUnitEl) profUnitEl.textContent = `Unit ${residentProfile.unit_number} • ${currentCommunityName || 'The Hamilton'}`;
 
   const dashAvatarEl = document.getElementById('pub-dash-avatar');
-  if (dashAvatarEl) dashAvatarEl.textContent = (residentProfile.full_name?.charAt(0) || 'R').toUpperCase();
+  if (dashAvatarEl) {
+    if (residentProfile.avatar_data_url) {
+      dashAvatarEl.innerHTML = `<img src="${residentProfile.avatar_data_url}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+      dashAvatarEl.style.padding = '0';
+    } else {
+      dashAvatarEl.textContent = (residentProfile.full_name?.charAt(0) || 'R').toUpperCase();
+      dashAvatarEl.style.padding = '';
+    }
+  }
 
   const profAvatarEl = document.getElementById('pub-profile-avatar');
-  if (profAvatarEl) profAvatarEl.textContent = (residentProfile.full_name?.charAt(0) || 'R').toUpperCase();
+  if (profAvatarEl) {
+    if (residentProfile.avatar_data_url) {
+      profAvatarEl.innerHTML = `<img src="${residentProfile.avatar_data_url}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+      profAvatarEl.style.padding = '0';
+    } else {
+      profAvatarEl.textContent = (residentProfile.full_name?.charAt(0) || 'R').toUpperCase();
+      profAvatarEl.style.padding = '';
+    }
+  }
 
   const badgeEl = document.getElementById('pub-profile-badge');
   if (badgeEl) {
@@ -1900,6 +2037,15 @@ function openPersonalInfoModal() {
     document.getElementById('resident-name-input').value = residentProfile.full_name;
     document.getElementById('resident-unit-input').value = residentProfile.unit_number;
     document.getElementById('resident-phone-input').value = residentProfile.phone || '';
+    
+    const previewEl = document.getElementById('resident-avatar-preview');
+    if (previewEl) {
+      if (residentProfile.avatar_data_url) {
+        previewEl.innerHTML = `<img src="${residentProfile.avatar_data_url}" style="width:100%; height:100%; object-fit:cover;">`;
+      } else {
+        previewEl.textContent = (residentProfile.full_name?.charAt(0) || 'R').toUpperCase();
+      }
+    }
     
     const isVerified = residentProfile.is_verified;
     document.getElementById('resident-name-input').disabled = isVerified;
@@ -2064,7 +2210,7 @@ function closePaymentMethodsModal() {
   document.getElementById('payment-methods-modal').classList.remove('open');
 }
 function openAddMemberModal() { document.getElementById('add-member-modal').classList.add('open'); }
-function openAddBoardMemberModal() { document.getElementById('board-id').value = ''; document.getElementById('board-name').value = ''; document.getElementById('board-position').value = ''; document.getElementById('board-phone').value = ''; document.getElementById('board-order').value = ''; document.getElementById('board-member-modal').classList.add('open'); }
+function openAddBoardMemberModal() { document.getElementById('board-id').value = ''; document.getElementById('board-name').value = ''; document.getElementById('board-position').value = ''; document.getElementById('board-phone').value = ''; document.getElementById('board-order').value = ''; document.getElementById('board-avatar-url').value = ''; document.getElementById('board-member-file').value = ''; document.getElementById('board-member-modal').classList.add('open'); }
 function openCreateAnnouncementModal() { document.getElementById('announcement-modal').classList.add('open'); }
 function openAddEventModal() {
   document.getElementById('event-id').value = '';
