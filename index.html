@@ -1805,7 +1805,7 @@ let residentProfile = {
   full_name: 'Sarah Johnson',
   unit_number: '12B',
   phone: '15551234567',
-  is_verified: true,
+  is_verified: false,
   member_id: null
 };
 let pendingPinAction = null;
@@ -1814,12 +1814,16 @@ function loadResidentProfile() {
   const stored = localStorage.getItem('resident_profile');
   if (stored) {
     residentProfile = JSON.parse(stored);
+    if (residentProfile.is_verified && !residentProfile.member_id) {
+      residentProfile.is_verified = false;
+      localStorage.setItem('resident_profile', JSON.stringify(residentProfile));
+    }
   } else {
     residentProfile = {
       full_name: 'Sarah Johnson',
       unit_number: '12B',
       phone: '15551234567',
-      is_verified: true,
+      is_verified: false,
       member_id: null
     };
   }
